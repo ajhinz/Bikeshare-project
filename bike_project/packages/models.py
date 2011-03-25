@@ -9,7 +9,7 @@ class Route(models.Model):
     createuser = models.ForeignKey(User)
     createdate = models.DateField(auto_now_add=True)
     route = models.TextField()
-    rating = models.SmallIntegerField()
+    rating = models.SmallIntegerField(null=True, blank=True)
 
 class BikeshareUpdate(models.Model):
     # editable=True makes it show up in the admin interface

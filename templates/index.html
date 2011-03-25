@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head><title>The page!</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+<h3>Hello, {{ user.username }}!</h3>
+<p>
+<a href="/account/logout">Log out of your account</a>
+</p>
+{% else %}
+<p>
+<a href="/account/login?next=/">Log in to your account</a>
+</p>
+{% endif %}
+<p>
+<form action="/route/add" method="post">{% csrf_token %}
+<textarea name="route">{"a": 123}</textarea>
+<input type="submit" value="add route">
+</form>
+</p>
+<h4>Saved routes</h4>
+<table>
+  <tr>
+    <td>Created by</td>
+    <td>Created on</td>
+    <td>Rating</td>
+    <td>Route</td>
+  </tr>
+{% for route in routes %}
+  <tr>
+    <td>{{ route.createuser }}</td>
+    <td>{{ route.createdate }}</td>
+    <td>{{ route.rating }}</td>
+    <td>{{ route.route }}</td>
+  </tr>
+{% endfor %}
+</table>
+</body>

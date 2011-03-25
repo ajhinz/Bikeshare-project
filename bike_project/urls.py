@@ -5,9 +5,13 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    (r'^bike_project/stations', 'packages.views.stations'),
-    (r'^bike_project/', 'packages.views.index'),
+    (r'^account/login/$', 'django.contrib.auth.views.login',
+     {'template_name': 'account/login.html'}),
+    (r'^account/logout/$', 'packages.views.account_logout'),
+
+    (r'^stations', 'packages.views.stations'),
+    (r'^route/add', 'packages.views.route_add'),
+    (r'^$', 'packages.views.index'),
 
                         
     # Uncomment the admin/doc line below to enable admin documentation:

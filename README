@@ -1,1 +1,24 @@
-We will need something here
+Introduction
+
+...
+
+Prerequisites
+
+1. Python - http://www.python.org
+2. Django - http://www.djangoproject.com/
+3. PostgreSQL - http://www.postgresql.org/
+4. Apache - http://httpd.apache.org/
+
+
+Notes:
+
+For PostgreSQL, it's recommended that you create your own user
+login (other than the default postgres user).  It may be easier to
+make the user name the same as your operating system user name because
+of the default permissions on who may log in from the host machine,
+but it is not required.
+
+Installation:
+
+You must edit the settings.py file in the bike_project directory.  You
+must set the database username and password.
