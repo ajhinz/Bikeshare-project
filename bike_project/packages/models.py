@@ -11,6 +11,14 @@ class Route(models.Model):
     route = models.TextField()
     rating = models.SmallIntegerField(null=True, blank=True)
 
+    def jsonize(self):
+        json_route = {}
+        json_route["createuser"] = self.createuser.username
+        json_route["createdate"] = self.createdate.isoformat()
+        json_route["route"] = self.route
+        json_route["rating"] = self.rating
+        return json_route
+
 class BikeshareUpdate(models.Model):
     # editable=True makes it show up in the admin interface
     createdate = models.DateTimeField(auto_now_add=True, editable=True)
@@ -62,3 +70,14 @@ class BikeshareStation(models.Model):
     get_stations = classmethod(get_stations)
 
     
+    def jsonize(self):
+        json_station = {}
+        json_station["station_id"] = self.station_id
+        json_station["station_name"] = self.station_name
+        json_station["latitude"] = self.latitude
+        json_station["longitude"] = self.longitude
+        json_station["installed"] = self.installed
+        json_station["locked"] = self.locked
+        json_station["number_bikes"] = self.number_bikes
+        json_station["number_empty_docks"] = self.number_empty_docks
+        return json_station

@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect, HttpResponseNotFound
 from django.core import serializers
 from django.utils import simplejson
 from packages.models import BikeshareStation, Route
@@ -11,7 +11,10 @@ from django.template import RequestContext
 
 def index(request):
     context = RequestContext(request, {})
-    context["routes"] = Route.objects.all()
+    if request.user.is_authenticated():
+        context["routes"] = Route.objects.filter(createuser=request.user)
+    else:
+        context["routes"] = []
     context["user"] = request.user
     return render_to_response("index.html", context)
 
@@ -24,10 +27,10 @@ def stations(request):
               "locked",
               "number_bikes",
               "number_empty_docks")
-
-    json_serializer = serializers.get_serializer("json")()
-    json_serializer.serialize(BikeshareStation.get_stations(), fields=fields)
-    return HttpResponse(json_serializer.getvalue())
+    stations = BikeshareStation.get_stations()
+    json_stations = [station.jsonize() for station in stations]
+    return HttpResponse(simplejson.dumps(json_stations),
+                        mimetype="application/json")
 
 def route_add(request):
     user = request.user
@@ -44,6 +47,16 @@ def route_add(request):
         route = Route(createuser=user, route=route_json)
         route.save()
         return HttpResponseRedirect("/")
+
+def route_get(request, route_id):
+    try:
+        route = Route.objects.get(pk=route_id)
+    except Route.DoesNotExist:
+        return HttpResponseNotFound("Route not found")
+    json_route = route.jsonize()
+
+    return HttpResponse(simplejson.dumps(json_route),
+                        mimetype="application/json")
 
 def account_logout(request):
     logout(request)

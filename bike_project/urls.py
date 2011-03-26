@@ -9,8 +9,9 @@ urlpatterns = patterns('',
      {'template_name': 'account/login.html'}),
     (r'^account/logout/$', 'packages.views.account_logout'),
 
-    (r'^stations', 'packages.views.stations'),
-    (r'^route/add', 'packages.views.route_add'),
+    (r'^stations/$', 'packages.views.stations'),
+    (r'^route/add/$', 'packages.views.route_add'),
+    (r'^route/(?P<route_id>\d+)/$', 'packages.views.route_get'),
     (r'^$', 'packages.views.index'),
 
                         
