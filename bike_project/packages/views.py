@@ -61,3 +61,7 @@ def route_get(request, route_id):
 def account_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
+
+def map(request):
+    return render_to_response("map.html")
+

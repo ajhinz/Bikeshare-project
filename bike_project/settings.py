@@ -98,3 +98,6 @@ INSTALLED_APPS = (
 )
 
 LOGIN_URL = "/account/login/"
+
+# For development only!
+STATIC_DOC_ROOT = "/home/adhinz/bike_project/static"
