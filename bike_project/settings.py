@@ -1,5 +1,12 @@
 # Django settings for bike_project project.
 
+import os
+import sys
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+LIB_DIR = os.path.join(PROJECT_ROOT, "lib")
+sys.path.insert(0, LIB_DIR)
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -78,7 +85,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'bike_project.urls'
 
 TEMPLATE_DIRS = (
-    "/home/adhinz/bike_project/templates",
+    os.path.join(PROJECT_ROOT, "templates")
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -100,4 +107,4 @@ INSTALLED_APPS = (
 LOGIN_URL = "/account/login/"
 
 # For development only!
-STATIC_DOC_ROOT = "/home/adhinz/bike_project/static"
+STATIC_DOC_ROOT = os.path.join(PROJECT_ROOT,"static")
