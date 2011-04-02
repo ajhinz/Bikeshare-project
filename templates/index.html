@@ -17,7 +17,7 @@
 </p>
 {% endif %}
 <p>
-<form action="/route/add" method="post">{% csrf_token %}
+<form action="/route/add/" method="post">{% csrf_token %}
 <textarea name="route">{"a": 123}</textarea>
 <input type="submit" value="add route">
 </form>
