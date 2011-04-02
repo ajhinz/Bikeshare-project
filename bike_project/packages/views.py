@@ -3,9 +3,12 @@ from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedir
 from django.core import serializers
 from django.utils import simplejson
 from packages.models import BikeshareStation, Route
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.template import RequestContext
+
 
 # Create your views here.
 
@@ -61,6 +64,42 @@ def route_get(request, route_id):
 def account_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
+
+class MyUserCreationForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super(MyUserCreationForm, self).__init__(*args, **kwargs)
+        self.fields["first_name"].required = True
+        self.fields["last_name"].required = True
+        self.fields["email"].required = True
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "email")
+
+def account_create(request):
+    if request.method == "POST":
+        form = MyUserCreationForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data["first_name"]
+            last_name = form.cleaned_data["last_name"]
+            email = form.cleaned_data["email"]
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password1"]
+
+            user = User.objects.create_user(username, email, password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+            
+            user = authenticate(username=username, password=password)
+            login(request, user)
+
+            return HttpResponseRedirect(request.POST.get("next", "/"))
+    else:
+        form = MyUserCreationForm()
+    context = RequestContext(request, {})
+    context["form"] = form
+    context["next"] = request.GET.get("next", "")
+    return render_to_response("account_create.html", context)
 
 def map(request):
     return render_to_response("map.html")

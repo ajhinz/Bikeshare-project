@@ -1,0 +1,14 @@
+<html>
+  <head><title>Creating a user</title>
+    <link rel="stylesheet" type="text/css" href = "/static/style.css" />
+  </head>
+  <body>
+    <div id="account_create_container">
+      <h1>Create an account</h1>
+      <form action="/account/create/" method="post" id="account_create">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="submit" value="Submit" />
+    </div>
+  </body>
+</html>

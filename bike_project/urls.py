@@ -10,6 +10,7 @@ urlpatterns = patterns(
     (r'^account/login/$', 'django.contrib.auth.views.login',
      {'template_name': 'account/login.html'}),
     (r'^account/logout/$', 'packages.views.account_logout'),
+    (r'^account/create/$', 'packages.views.account_create'),
 
     (r'^stations/$', 'packages.views.stations'),
     (r'^route/add/$', 'packages.views.route_add'),

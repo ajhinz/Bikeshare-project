@@ -4,11 +4,14 @@
 </head>
 <body>
 {% if user.is_authenticated %}
-<h3>Hello, {{ user.username }}!</h3>
+<h3>Hello, {{ user.first_name }}!</h3>
 <p>
 <a href="/account/logout">Log out of your account</a>
 </p>
 {% else %}
+<p>
+<a href="/account/create?next=/">Create an account</a>
+</p>
 <p>
 <a href="/account/login?next=/">Log in to your account</a>
 </p>
