@@ -2,8 +2,6 @@ Making all sorts of grammatical additions here.
 
 Introduction
 
-...
-
 Prerequisites
 
 1. Python - http://www.python.org
@@ -25,5 +23,3 @@ Installation:
 You must edit the settings.py file in the bike_project directory.  You
 must set the database username and password.
 
-
-testing a commit
