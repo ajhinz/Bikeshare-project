@@ -4,6 +4,7 @@ function get_stations() {
 
     $.get("/stations")
         .success(function(stations) {
+                // Add a location property that is a google LatLng object
                 $.each(stations, function(index, station) {
                         var lat = station["latitude"];
                         var lng = station["longitude"];
@@ -79,40 +80,70 @@ function add_info_window(map, marker, info_window, station) {
 }
 
 function find_button_click_handler(map, stations) {
-
+    // Create the services
+    var geocoder = new google.maps.Geocoder();
+    var directionsService = new google.maps.DirectionsService();
+    
     return function() {
+
         // values will be an array of deferred objects that will
-        // eventually contain geocode results
+        // eventually contain geocoded locations
         var geocodes = $("input.find_input").map(function() {
-                return geocode(map, stations, $(this).val());
-                });
-        // This tells what to do when all the geocode results are in
+                return geocode(geocoder, $(this).val());
+            });
+
+        // This tells what to do when all the geocode locations are in
         $.when.apply(null, geocodes.get()).done(function() {
+
                 // Turn arguments object into an array
                 // http://debuggable.com/posts/turning-javascripts-arguments-object-into-an-array:4ac50ef8-3bd0-4a2d-8c2e-535ccbdd56cb
-                var results = Array.prototype.slice.call(arguments);
-                // walks will be an array of deferred objects that will
-                // eventually contain directiosn results
-                var walks = $.map(results, function(result, index) {
-                        var location = result.geometry.location;
-                        var nearest = find_nearest_station(location,
-                                                           stations);
-                        return get_walking_route(map, location, 
-                                                  nearest["location"]);
+                var locations = Array.prototype.slice.call(arguments);
+
+                // Get the nearest stations for each location
+                var nearest_stations = $.map(locations, function(station) {
+                        var location = station.geometry.location;
+                        return find_nearest_station(location, stations);
                     });
-                // Tells what to do when all direction results are in
+                    
+                // walks will be an array of deferred objects that will
+                // eventually contain directions results
+                var walks = $.map(locations, function(location, index) {
+                        
+                        // Get the directions from the user's location to the
+                        // nearest bike station
+                        var location_loc = location.geometry.location;
+                        var nearest_loc = nearest_stations[index]["location"];
+
+                        // Returns a list of deferred objects
+                        return get_route(directionsService,
+                                         [location_loc, nearest_loc],
+                                         "WALKING");
+                    });
+
+                // get the bicycle route between all the stations along
+                // the route
+                walks.push(get_route(directionsService,
+                                     $.map(nearest_stations,
+                                            function(station) {
+                                                return station["location"];
+                                            }),
+                                     "BICYCLING"));
+
+                // Tells what to do when all directions are in
                 $.when.apply(null, walks).done(function() {
+                        
                         // Turn arguments object into an array
                         var routes = Array.prototype.slice.call(arguments);
-
-                        // Add each route to the map
+                        
+                        // Show each walking route and the full bicycle route
                         $.each(routes, function(index, route) {
-                                show_walking_route(map, route);
+                                show_route(map, route);
                             });
                     });
             });
+    }
 }
-
+    
 function add_click_handlers(map, stations) {
     // Add all DOM event listeners
 
@@ -133,10 +164,9 @@ function add_click_handlers(map, stations) {
 }
 
 
-function geocode(map, stations, address) {
+function geocode(geocoder, address) {
+    // Convert an address to an object containing latitude/longitude
     var defer = $.Deferred();
-   // Do this once per page load???
-    var geocoder = new google.maps.Geocoder();
 
     geocoder.geocode({"address" : address},
                      function(results, status) {
@@ -152,6 +182,7 @@ function geocode(map, stations, address) {
 }
 
 function find_nearest_station(point, stations) {
+    // Find the nearest station from the list of stations to the given point
     var nearest_station = null;
     var nearest_distance = null;
     $.each(stations, function(index, station) {
@@ -165,20 +196,22 @@ function find_nearest_station(point, stations) {
     return nearest_station;
 }
 
-function to_rad(n) {
-    return n * Math.PI / 180;
-}
-
-function get_walking_route(map, origin, destination) {
+function get_route(directionsService, points, travel_mode) {
     var defer = $.Deferred();
-
-    // Do this once per page load??
-    var directionsService = new google.maps.DirectionsService();
+    var origin = points[0];
+    var destination = points[points.length - 1];
+    
+    var waypoints = $.each(points.slice(1, -1), function(index, point) {
+            return {
+                location: point,
+                stopover: true
+            };
+        });
 
     var request = {
         origin: origin,
         destination: destination,
-        travelMode: google.maps.DirectionsTravelMode.WALKING
+        travelMode: google.maps.DirectionsTravelMode[travel_mode]
     };
     directionsService.route(request, function(result, status) {
             if (status != google.maps.DirectionsStatus.OK) {
@@ -192,7 +225,7 @@ function get_walking_route(map, origin, destination) {
     return defer.promise();
 }
 
-function show_walking_route(map, route) {
+function show_route(map, route) {
     // Do once per page load??
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setMap(map);
@@ -200,16 +233,21 @@ function show_walking_route(map, route) {
 }
 
 $(document).ready(function() {
+
+        // Get the station info, adn then show the map, add the station
+        // markers, and add the click handlers
         $.when(get_stations()).then(function(stations) {
                 var map = show_map(stations);
                 
                 add_stations(map, stations);
 
                 add_click_handlers(map, stations);
+
+                $("div#find_buttons span").click();
+                $("input.find_input").first().val("white house");
+                $("input.find_input").last().val("washington monument");
                 });
     });
-
-
 
 
 // Utilities
@@ -225,6 +263,12 @@ String.prototype.supplant = function (o) {
         }
     );
 };
+
+// Convert degrees to radians
+function to_rad(n) {
+    return n * Math.PI / 180;
+}
+
 
 // Finds distance (in km) between two LatLng objects
 function distance(point_a, point_b) {
