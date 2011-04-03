@@ -24,6 +24,15 @@ body {
     float: left;
 }
 
+div#find_buttons span {
+    float:left;
+    margin-left: 10px;
+}
+
+div#find_buttons input {
+    float:right;
+}
+
 div#account_create_container {
     width: 410px;
     margin: 50px auto 0px auto;
@@ -52,4 +61,8 @@ form#account_create p {
 form#account_create ul.errorlist li {
     font-size: 0.8em;
     color: red;
+}
+
+.hover_cursor {
+    cursor: pointer;
 }

@@ -78,28 +78,58 @@ function add_info_window(map, marker, info_window, station) {
         });
 }
 
+function find_button_click_handler(map, stations) {
+
+    return function() {
+        // values will be an array of deferred objects that will
+        // eventually contain geocode results
+        var geocodes = $("input.find_input").map(function() {
+                return geocode(map, stations, $(this).val());
+                });
+        // This tells what to do when all the geocode results are in
+        $.when.apply(null, geocodes.get()).done(function() {
+                // Turn arguments object into an array
+                // http://debuggable.com/posts/turning-javascripts-arguments-object-into-an-array:4ac50ef8-3bd0-4a2d-8c2e-535ccbdd56cb
+                var results = Array.prototype.slice.call(arguments);
+                // walks will be an array of deferred objects that will
+                // eventually contain directiosn results
+                var walks = $.map(results, function(result, index) {
+                        var location = result.geometry.location;
+                        var nearest = find_nearest_station(location,
+                                                           stations);
+                        return get_walking_route(map, location, 
+                                                  nearest["location"]);
+                    });
+                // Tells what to do when all direction results are in
+                $.when.apply(null, walks).done(function() {
+                        // Turn arguments object into an array
+                        var routes = Array.prototype.slice.call(arguments);
+
+                        // Add each route to the map
+                        $.each(routes, function(index, route) {
+                                show_walking_route(map, route);
+                            });
+                    });
+            });
+}
 
 function add_click_handlers(map, stations) {
     // Add all DOM event listeners
 
-    // Handler for the Find button
-    $("#find_button").click(function() {
-            $("input.find_input").each(function() {
-                    geocode(map, stations, $(this).val());
-                    $.when(geocode(map, stations, $(this).val()))
-                        .done(function(results) {
-                                var result = results[0];
-                                var location = result.geometry.location;
-                                map.setCenter(location);
+    // Handler for the Plus button
+    $("div#find_buttons span").hover(function() {
+            $(this).addClass("hover_cursor");
+        }, function() {
+            $(this).removeClass("hover_cursor");
+        }).click(function() {
+                var input = $("input.find_input").last();
+                var new_input = input.clone();
+                new_input.val("");
+                input.after(new_input);
+            });
 
-                                var nearest = find_nearest_station(location,
-                                                                   stations);
-                                $.when(get_walking_route(map, location,
-                                                         nearest["location"]))
-                                    .done(function(route) {
-                                            show_walking_route(map, route);
-                                        });
-                            })})});
+    // Handler for the Find button
+    $("#find_button").click(find_button_click_handler(map, stations));
 }
 
 
@@ -115,7 +145,7 @@ function geocode(map, stations, address) {
                              defer.reject();
                          }
                          else {
-                             defer.resolve(results);
+                             defer.resolve(results[0]);
                          }
                      });
     return defer.promise();
