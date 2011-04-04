@@ -107,7 +107,7 @@ function find_button_click_handler(map, stations) {
                     
                 // walks will be an array of deferred objects that will
                 // eventually contain directions results
-                var walks = $.map(locations, function(location, index) {
+                var routes = $.map(locations, function(location, index) {
                         
                         // Get the directions from the user's location to the
                         // nearest bike station
@@ -122,7 +122,7 @@ function find_button_click_handler(map, stations) {
 
                 // get the bicycle route between all the stations along
                 // the route
-                walks.push(get_route(directionsService,
+                routes.push(get_route(directionsService,
                                      $.map(nearest_stations,
                                             function(station) {
                                                 return station["location"];
@@ -130,15 +130,24 @@ function find_button_click_handler(map, stations) {
                                      "BICYCLING"));
 
                 // Tells what to do when all directions are in
-                $.when.apply(null, walks).done(function() {
+                $.when.apply(null, routes).done(function() {
                         
                         // Turn arguments object into an array
                         var routes = Array.prototype.slice.call(arguments);
-                        
+
+                        var num_walks = routes.length;
+                        var walking_routes = routes.slice(0, num_walks - 1);
+                        var bike_route = routes[num_walks - 1];
+
+                        // modifies bike_route
+                        join_routes(walking_routes, bike_route);
+
+                        show_route(map, bike_route);
+
                         // Show each walking route and the full bicycle route
-                        $.each(routes, function(index, route) {
+                        /*$.each(routes, function(index, route) {
                                 show_route(map, route);
-                            });
+                                });*/
                     });
             });
     }
@@ -201,7 +210,7 @@ function get_route(directionsService, points, travel_mode) {
     var origin = points[0];
     var destination = points[points.length - 1];
     
-    var waypoints = $.each(points.slice(1, -1), function(index, point) {
+    var waypoints = $.map(points.slice(1, -1), function(point) {
             return {
                 location: point,
                 stopover: true
@@ -211,6 +220,7 @@ function get_route(directionsService, points, travel_mode) {
     var request = {
         origin: origin,
         destination: destination,
+        waypoints: waypoints,
         travelMode: google.maps.DirectionsTravelMode[travel_mode]
     };
     directionsService.route(request, function(result, status) {
@@ -230,6 +240,77 @@ function show_route(map, route) {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setMap(map);
     directionsDisplay.setDirections(route);
+}
+
+function join_routes(walking_routes, bike_route) {
+    var legs = [];
+
+    $.each(bike_route.routes[0].legs, function(index, leg) {
+            if (index == 0) {
+                var walking_route = walking_routes[index].routes[0];
+                legs.push(walking_route.legs[0]);
+                legs.push(leg);
+            }
+            else {
+                var walk = walking_routes[index].routes[0].legs[0];
+                walking_reverse = reverse_leg(walk);
+
+                legs.push(walking_reverse);
+                legs.push(walking_routes[index].routes[0].legs[0]);
+                legs.push(leg);
+            }
+        });
+    var last_walk = walking_routes[walking_routes.length - 1].routes[0].legs[0];
+    var walking_reverse = reverse_leg(last_walk);
+    legs.push(walking_reverse);
+
+    // max bounds
+    bike_route.routes[0].legs = legs;
+}
+
+function reverse_leg(leg) {
+    var new_leg = {
+        // copy
+        distance: leg.distance,
+        duration: leg.duration,
+
+        // swap
+        end_address: leg.start_address,
+        start_address: leg.end_address,
+        
+        // swap
+        end_location: leg.start_location,
+        start_location: leg.end_location,
+        
+        // reverse
+        steps: reverse_steps(leg.steps)
+    };
+
+    return new_leg;
+}
+
+function reverse_steps(steps) {
+    new_steps = steps.slice(0);
+    new_steps.reverse();
+    return $.map(new_steps, function(step) {
+            new_step = {
+                // copy
+                distance: step.distance,
+                duration: step.duration,
+                instructions: step.instructions,
+                travel_mode: step.travel_mode,
+                
+                // swap
+                start_location: step.end_location,
+                end_location: step.start_location,
+                
+                // Copy and reverse
+                path: step.path.slice(0)
+            };
+            new_step.path.reverse();
+            return new_step;
+        });
+    return new_steps;
 }
 
 $(document).ready(function() {
