@@ -83,6 +83,7 @@ function find_button_click_handler(map, stations) {
     // Create the services
     var geocoder = new google.maps.Geocoder();
     var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer();
     
     return function() {
 
@@ -98,57 +99,42 @@ function find_button_click_handler(map, stations) {
                 // Turn arguments object into an array
                 // http://debuggable.com/posts/turning-javascripts-arguments-object-into-an-array:4ac50ef8-3bd0-4a2d-8c2e-535ccbdd56cb
                 var locations = Array.prototype.slice.call(arguments);
+                var start_location = locations[0].geometry.location;
+                var end_location = locations[locations.length - 1].geometry.location;
 
-                // Get the nearest stations for each location
-                var nearest_stations = $.map(locations, function(station) {
-                        var location = station.geometry.location;
-                        return find_nearest_station(location, stations);
+                var start_station = find_nearest_station(start_location,
+                                                         stations);
+                var end_station = find_nearest_station(end_location, stations);
+
+
+                // add stations to list of points
+                var points = $.map(locations, function(location) {
+                        return location.geometry.location;
                     });
-                    
-                // walks will be an array of deferred objects that will
-                // eventually contain directions results
-                var routes = $.map(locations, function(location, index) {
-                        
-                        // Get the directions from the user's location to the
-                        // nearest bike station
-                        var location_loc = location.geometry.location;
-                        var nearest_loc = nearest_stations[index]["location"];
+                var points = [].concat([start_station.location],
+                                       points.slice(1, -1),
+                                       [end_station.location]);
 
-                        // Returns a list of deferred objects
-                        return get_route(directionsService,
-                                         [location_loc, nearest_loc],
-                                         "WALKING");
-                    });
+                $.when(get_route(directionsService,
+                                 [start_location, start_station.location],
+                                 "WALKING"),
+                       get_route(directionsService,
+                                 points,
+                                 "BICYCLING"),
+                       get_route(directionsService,
+                                 [end_station.location, end_location],
+                                 "WALKING")
+                       ).done(function(start_walk,
+                                       bike,
+                                       end_walk) {
 
-                // get the bicycle route between all the stations along
-                // the route
-                routes.push(get_route(directionsService,
-                                     $.map(nearest_stations,
-                                            function(station) {
-                                                return station["location"];
-                                            }),
-                                     "BICYCLING"));
+                                  // split bike route into 30 minute segments
+                                  route = join_routes(start_walk,
+                                                      bike,
+                                                      end_walk);
 
-                // Tells what to do when all directions are in
-                $.when.apply(null, routes).done(function() {
-                        
-                        // Turn arguments object into an array
-                        var routes = Array.prototype.slice.call(arguments);
-
-                        var num_walks = routes.length;
-                        var walking_routes = routes.slice(0, num_walks - 1);
-                        var bike_route = routes[num_walks - 1];
-
-                        // modifies bike_route
-                        join_routes(walking_routes, bike_route);
-
-                        show_route(map, bike_route);
-
-                        // Show each walking route and the full bicycle route
-                        /*$.each(routes, function(index, route) {
-                                show_route(map, route);
-                                });*/
-                    });
+                                  show_route(map, directionsRenderer, route);
+                              });
             });
     }
 }
@@ -235,29 +221,56 @@ function get_route(directionsService, points, travel_mode) {
     return defer.promise();
 }
 
-function show_route(map, route) {
-    // Do once per page load??
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(map);
-    directionsDisplay.setDirections(route);
+function show_route(map, directionsRenderer, route) {
+    directionsRenderer.setMap(map);
+    directionsRenderer.setDirections(route);
 }
 
-function join_routes(walking_routes, bike_route) {
+function join_routes(start_walk, bike, end_walk) {
     var legs = [];
 
-    $.each(bike_route.routes[0].legs, function(index, leg) {
+    var thirty_minute_limit = 0;
+
+    var start_walk_route = start_walk.routes[0];
+    var bike_route = bike.routes[0];
+    var end_walk_route = end_walk.routes[0];
+
+    var route = {
+        routes: [{
+                bounds: bike_route.bounds,
+                copyrights: bike_route.copyrights,
+                legs: [].concat(start_walk_route.legs,
+                                bike_route.legs,
+                                end_walk_route.legs),
+                overview_path: [].concat(start_walk_route.overview_path,
+                                         bike_route.overview_path,
+                                         end_walk_route.overview_path),
+                warnings: [].concat(start_walk_route.warnings,
+                                    bike_route.warnings,
+                                    end_walk_route.warnings)
+            }]
+    };
+
+    return route;
+
+    /*$.each(bike_route.routes[0].legs, function(index, bike_leg) {
             if (index == 0) {
-                var walking_route = walking_routes[index].routes[0];
-                legs.push(walking_route.legs[0]);
-                legs.push(leg);
+                var walk_route = walking_routes[index].routes[0];
+                legs.push(walk_route.legs[0]);
+                legs.push(bike_leg);
             }
             else {
-                var walk = walking_routes[index].routes[0].legs[0];
-                walking_reverse = reverse_leg(walk);
+                if (thirty_minute_limit + bike_leg.duration.value > 1800) {
+                    var walk_route = walking_routes[index].routes[0];
+                    var walk_leg = walk_route.legs[0];
+                    var walk_leg_reverse = reverse_leg(walk_leg);
 
-                legs.push(walking_reverse);
-                legs.push(walking_routes[index].routes[0].legs[0]);
-                legs.push(leg);
+                    legs.push(walk_leg_reverse);
+                    legs.push(walk_leg);
+                    thirty_minute_limit = 0;
+                }
+                thirty_minute_limit += bike_leg.duration.value;
+                legs.push(bike_leg);
             }
         });
     var last_walk = walking_routes[walking_routes.length - 1].routes[0].legs[0];
@@ -266,6 +279,7 @@ function join_routes(walking_routes, bike_route) {
 
     // max bounds
     bike_route.routes[0].legs = legs;
+    */
 }
 
 function reverse_leg(leg) {
@@ -324,9 +338,11 @@ $(document).ready(function() {
 
                 add_click_handlers(map, stations);
 
-                $("div#find_buttons span").click();
                 $("input.find_input").first().val("white house");
+                $("div#find_buttons span").click();
                 $("input.find_input").last().val("washington monument");
+                $("div#find_buttons span").click();
+                $("input.find_input").last().val("lincoln memorial");
                 });
     });
 
