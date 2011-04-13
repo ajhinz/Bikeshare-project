@@ -25,6 +25,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 960px;
+  background-image: url(/static/16_col.gif);
 }
 
 /* `Grid >> Global

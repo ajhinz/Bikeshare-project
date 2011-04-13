@@ -102,9 +102,34 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     "bike_project.packages",
+	"social_auth",
 )
 
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleBackend',
+    'social_auth.backends.yahoo.YahooBackend',
+    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+    'social_auth.backends.OpenIDBackend',
+    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+TWITTER_CONSUMER_KEY     = 'aUd6q95k4fYUTKMjIXP6A'
+TWITTER_CONSUMER_SECRET  = 'uMFJ37KaqlxeLAKelkrC6Lhq9uQ2QWcw1FwOYsuxovk'
+FACEBOOK_APP_ID			 = '113215115426951'
+FACEBOOK_API_SECRET      = '1820f09251daaba73ecf54f432f891cb'
+
 LOGIN_URL = "/account/login/"
+LOGIN_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_COMPLETE_URL_NAME  = 'complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'associate_complete'
 
 # For development only!
 STATIC_DOC_ROOT = os.path.join(PROJECT_ROOT,"static")
+
+

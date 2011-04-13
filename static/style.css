@@ -23,6 +23,11 @@ body {
     height: 600px;
 }
 
+.hover_cursor {
+    cursor: pointer;
+	color: blue;
+}
+
 /*div#find_buttons span {
     float:left;
     margin-left: 10px;
@@ -62,6 +67,4 @@ form#account_create ul.errorlist li {
     color: red;
 }
 
-.hover_cursor {
-    cursor: pointer;
-}*/
+*/

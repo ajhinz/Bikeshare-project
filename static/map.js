@@ -69,7 +69,7 @@ function add_station(map, station) {
 
 function add_info_window(map, marker, info_window, station) {
     // Create the stringed content of the infor window
-    var content = "<h4>{station_name}</h4><div>available bikes: {number_bikes}</div><div>empty docks: {number_empty_docks}</div>".supplant(station);
+    var content = "<h4>{station_name}</h4><div>Available bikes: <b>{number_bikes}</b></div><div>Empty docks: <b>{number_empty_docks}</b></div>".supplant(station);
 
     // Add a click handler to the marker to display the content in the
     // info window
@@ -157,7 +157,7 @@ function add_click_handlers(map, stations) {
     // Add all DOM event listeners
 
     // Handler for the Plus button
-    $("div#find_buttons span").hover(function() {
+    $("div#add_destination").hover(function() {
             $(this).addClass("hover_cursor");
         }, function() {
             $(this).removeClass("hover_cursor");
