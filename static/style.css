@@ -1,7 +1,8 @@
-html {
+/*html {
     height: 100%;
 }
 body {
+    font-family: "Georgia";
     height: 100%;
     margin: 0px;
     padding: 0px;
@@ -16,15 +17,18 @@ body {
     height: 600px;
     float: left;
     margin-right: 10px;
-}
+}*/
 
 #map_canvas {
-    width: 800px;
     height: 600px;
-    float: left;
 }
 
-div#find_buttons span {
+.hover_cursor {
+    cursor: pointer;
+	color: blue;
+}
+
+/*div#find_buttons span {
     float:left;
     margin-left: 10px;
 }
@@ -63,6 +67,4 @@ form#account_create ul.errorlist li {
     color: red;
 }
 
-.hover_cursor {
-    cursor: pointer;
-}
+*/
