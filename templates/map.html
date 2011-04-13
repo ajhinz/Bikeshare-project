@@ -1,21 +1,28 @@
 <!doctype html>
 <html>
   <head><title>A map</title>
-    <link rel="stylesheet" type="text/css" href = "/static/style.css" />
+    <link rel="stylesheet" href="/static/reset.css" type="text/css">
+	<link rel="stylesheet" href="/static/text.css" type="text/css">
+	<link rel="stylesheet" href="/static/960.css" type="text/css">
+	<link rel="stylesheet" href="/static/style.css" type="text/css">
     <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script src="/static/jquery.js"></script>
     <script src="/static/map.js"></script>
   </head>
   <body>
-    <div id="header">Capital Bikeshare Route Finder</div>
-    <div id="left">
-      <h4>Find something</h4>
-      <input type="text" class="find_input"/>
-      <div id="find_buttons">
-        <span>+</span>
-        <input type="button" value="Find" id="find_button" />
-      </div>
-    </div>
-    <div id="map_canvas"></div>
+    <div class="container_16">
+		<div class="grid_16">
+			<div id="header">Capital Bikeshare Route Finder</div>
+		</div>
+	    <div class="grid_3">
+	      <h4>Search for a route</h4>
+	      <input type="text" class="find_input"/>
+	      	<div id="find_buttons">
+		        <span>+</span>
+		        <input type="button" value="Find" id="find_button" />
+		    </div>
+	    </div>
+	    <div class="grid_13" id="map_canvas"></div>
+	</div>
   </body>
 </html>
