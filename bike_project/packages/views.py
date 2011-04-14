@@ -49,7 +49,7 @@ def route_add(request):
         route_json = simplejson.dumps(route_raw_json)
         route = Route(createuser=user, route=route_json)
         route.save()
-        return HttpResponseRedirect("/")
+        return HttpResponse("Success")
 
 def route_get(request, route_id):
     try:
@@ -58,8 +58,10 @@ def route_get(request, route_id):
         return HttpResponseNotFound("Route not found")
     json_route = route.jsonize()
 
-    return HttpResponse(simplejson.dumps(json_route),
-                        mimetype="application/json")
+    context = RequestContext(request, {})
+    context["saved_route"] = simplejson.dumps(json_route)
+
+    return render_to_response("map.html", context)
 
 def account_logout(request):
     logout(request)

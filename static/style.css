@@ -28,6 +28,10 @@ body {
 	color: blue;
 }
 
+#save_route {
+    display: none;
+}
+
 /*div#find_buttons span {
     float:left;
     margin-left: 10px;

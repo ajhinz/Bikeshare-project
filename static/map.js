@@ -79,11 +79,10 @@ function add_info_window(map, marker, info_window, station) {
         });
 }
 
-function find_button_click_handler(map, stations) {
+function find_button_click_handler(map, directionsRenderer, stations) {
     // Create the services
     var geocoder = new google.maps.Geocoder();
     var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer();
     
     return function() {
 
@@ -115,6 +114,8 @@ function find_button_click_handler(map, stations) {
                                        points.slice(1, -1),
                                        [end_station.location]);
 
+                // Get start walking directions, bicycling directions,
+                // and the final walking directiosn
                 $.when(get_route(directionsService,
                                  [start_location, start_station.location],
                                  "WALKING"),
@@ -127,19 +128,24 @@ function find_button_click_handler(map, stations) {
                        ).done(function(start_walk,
                                        bike,
                                        end_walk) {
-
-                                  // split bike route into 30 minute segments
+                                  
+                                  // Join the three directions results into
+                                  // a single route
                                   route = join_routes(start_walk,
                                                       bike,
                                                       end_walk);
 
+                                  // Show the route on the map
                                   show_route(map, directionsRenderer, route);
+                                  
+                                  // Add a save link under the Find button
+                                  add_save_button(route);
                               });
             });
     }
 }
     
-function add_click_handlers(map, stations) {
+function add_click_handlers(map, directionsRenderer, stations) {
     // Add all DOM event listeners
 
     // Handler for the Plus button
@@ -155,9 +161,19 @@ function add_click_handlers(map, stations) {
             });
 
     // Handler for the Find button
-    $("#find_button").click(find_button_click_handler(map, stations));
+    $("#find_button").click(find_button_click_handler(map, directionsRenderer, 
+                                                      stations));
 }
 
+function add_save_button(route) {
+    $("#save_route").show().hover(function() {
+            $(this).addClass("hover_cursor");
+        }, function() {
+            $(this).removeClass("hover_cursor");
+        }).click(function() {
+                save_route(route);
+            });
+}
 
 function geocode(geocoder, address) {
     // Convert an address to an object containing latitude/longitude
@@ -252,34 +268,6 @@ function join_routes(start_walk, bike, end_walk) {
     };
 
     return route;
-
-    /*$.each(bike_route.routes[0].legs, function(index, bike_leg) {
-            if (index == 0) {
-                var walk_route = walking_routes[index].routes[0];
-                legs.push(walk_route.legs[0]);
-                legs.push(bike_leg);
-            }
-            else {
-                if (thirty_minute_limit + bike_leg.duration.value > 1800) {
-                    var walk_route = walking_routes[index].routes[0];
-                    var walk_leg = walk_route.legs[0];
-                    var walk_leg_reverse = reverse_leg(walk_leg);
-
-                    legs.push(walk_leg_reverse);
-                    legs.push(walk_leg);
-                    thirty_minute_limit = 0;
-                }
-                thirty_minute_limit += bike_leg.duration.value;
-                legs.push(bike_leg);
-            }
-        });
-    var last_walk = walking_routes[walking_routes.length - 1].routes[0].legs[0];
-    var walking_reverse = reverse_leg(last_walk);
-    legs.push(walking_reverse);
-
-    // max bounds
-    bike_route.routes[0].legs = legs;
-    */
 }
 
 function reverse_leg(leg) {
@@ -327,23 +315,77 @@ function reverse_steps(steps) {
     return new_steps;
 }
 
+// Send an AJAX POST request to save the route
+// Needs to handle errors better:
+//   500 = Server error
+//   403 = Authentication error.  Ask for login credentials
+function save_route(route) {
+    var encoded_route = encode_route(route);
+    $.post("/route/add/", {
+            route: encode_route(route)
+                })
+        .success(function() {alert("Saved!")})
+        .error(function(jqXHR, textStatus, errorThrown) {
+                alert("Error! " + textStatus + ", " + errorThrown)});
+}
+
+// Take a directions result and convert into a JSON string
+// Handles google.maps.LatLng and google.maps.LatLngBounds
+function encode_route(route) {
+    return JSON.stringify(route, function(key, value) {
+            if (value instanceof google.maps.LatLngBounds) {
+                return {"LatLngBounds":
+                        {"sw": value.getSouthWest(),
+                                "ne": value.getNorthEast()}};
+                }
+            else if (value instanceof google.maps.LatLng) {
+                return {"LatLng" : 
+                        {"lat": value.lat(),
+                                "lng": value.lng()}};
+            }
+            else return value;
+        });
+}
+
+// Takes a JSON string and converts into a directions result
+// Handles google.maps.LatLng and google.maps.LatLngBounds
+function decode_route(route) {
+    return JSON.parse(route, function(key, value) {
+            if (value["LatLngBounds"]) {
+                return new google.maps.LatLngBounds(value["LatLngBounds"]["sw"],
+                                                    value["LatLngBounds"]["ne"]);
+            }
+            else if (value["LatLng"]) {
+                var lat = value["LatLng"]["lat"];
+                var lng = value["LatLng"]["lng"];
+                //return new google.maps.LatLng(value["lat"], value["lng"]);
+                return new google.maps.LatLng(lat, lng);
+            }
+            else return value;
+        });
+}
+
 $(document).ready(function() {
 
         // Get the station info, adn then show the map, add the station
         // markers, and add the click handlers
         $.when(get_stations()).then(function(stations) {
                 var map = show_map(stations);
+
+                var directionsRenderer = new google.maps.DirectionsRenderer();
                 
                 add_stations(map, stations);
 
-                add_click_handlers(map, stations);
+                add_click_handlers(map, directionsRenderer, stations);
 
-                $("input.find_input").first().val("white house");
-                $("div#find_buttons span").click();
-                $("input.find_input").last().val("washington monument");
-                $("div#find_buttons span").click();
-                $("input.find_input").last().val("lincoln memorial");
-                });
+                // Global variable
+                // Load a saved route
+                if (saved_route) {
+                    show_route(map, directionsRenderer,
+                               decode_route(saved_route["route"]));
+                }
+                
+            });
     });
 
 
@@ -384,3 +426,28 @@ function distance(point_a, point_b) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // distance in km
 }
+
+
+// Allow CSRF token to be sent with AJAX POST requests
+// http://docs.djangoproject.com/en/1.2/ref/contrib/csrf/
+$('html').ajaxSend(function(event, xhr, settings) {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            // Only send the token to relative URLs i.e. locally.
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    });
