@@ -18,7 +18,7 @@ urlpatterns = patterns(
 
     (r'^map/$', 'packages.views.map'),
 
-    (r'^$', 'packages.views.index'),
+    (r'^$', 'packages.views.map'),
 
     # Use this only for development!!
     # http://docs.djangoproject.com/en/1.2/howto/static-files/

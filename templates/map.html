@@ -7,7 +7,7 @@
 {% if saved_route %}
 var saved_route = {{ saved_route|safe }};
 {% else %}
-var saved_route = {};
+var saved_route = null;
 {% endif %}
 </script>
 {% endblock %}
