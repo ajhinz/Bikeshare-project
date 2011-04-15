@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect, HttpResponseNotFound
 from django.core import serializers
 from django.utils import simplejson
-from packages.models import BikeshareStation, Route
+from packages.models import BikeshareStation, Route, RouteLocation
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -17,6 +17,7 @@ def index(request):
     context["user"] = request.user
     if request.user.is_authenticated():
         context["routes"] = Route.objects.filter(createuser=request.user)
+        context["routelocations"] = RouteLocation.objects.all()
     else:
         context["routes"] = []
     return render_to_response("index.html", context)
@@ -44,11 +45,19 @@ def route_add(request):
     else:
         try:
             route_raw_json = simplejson.loads(request.POST["route"])
+            locationArray_raw = simplejson.loads(request.POST["locationArray"])
         except simplejson.JSONDecodeError:
             return HttpResponseServerError("Bad route provided")
         route_json = simplejson.dumps(route_raw_json)
         route = Route(createuser=user, route=route_json)
         route.save()
+		
+		# saves the locations traversed in the route
+        for i, location in enumerate(locationArray_raw):
+            print i,location
+            route_location = RouteLocation(route=route,order=i,location=location)
+            route_location.save()
+
         return HttpResponse("Success")
 
 def route_get(request, route_id):

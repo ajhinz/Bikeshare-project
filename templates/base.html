@@ -66,11 +66,13 @@
 		    <td>Route</td>
 		  </tr>
 		{% for route in routes %}
-		  <tr>
+		<tr>
 		    <td>{{ route.createuser }}</td>
 		    <td>{{ route.createdate }}</td>
 		    <td>{{ route.rating }}</td>
-		    <td>{{ route.route }}</td>
+			{% for routelocation in route.routelocation_set.all %}
+			<td>{{ routelocation.location }}</td>
+				{% endfor %}
 		    <td><a href="/route/{{ route.id }}">View</a></td>
 		  </tr>
 		{% endfor %}

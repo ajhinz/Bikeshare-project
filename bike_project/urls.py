@@ -17,6 +17,9 @@ urlpatterns = patterns(
     (r'^route/(?P<route_id>\d+)/$', 'packages.views.route_get'),
 
     (r'^map/$', 'packages.views.map'),
+	
+	# for testing the saved route locations
+	(r'^account/$', 'packages.views.index'),
 
     (r'^$', 'packages.views.map'),
 

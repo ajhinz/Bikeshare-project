@@ -98,6 +98,13 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                 // Turn arguments object into an array
                 // http://debuggable.com/posts/turning-javascripts-arguments-object-into-an-array:4ac50ef8-3bd0-4a2d-8c2e-535ccbdd56cb
                 var locations = Array.prototype.slice.call(arguments);
+				
+				var locationArray = new Array();
+				// create array of the steps in the trip
+				for (var i = 0; i < locations.length; i++) {
+					locationArray[i] = locations[i].address_components[0].long_name;
+				}
+				
                 var start_location = locations[0].geometry.location;
                 var end_location = locations[locations.length - 1].geometry.location;
 
@@ -139,7 +146,7 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                                   show_route(map, directionsRenderer, route);
                                   
                                   // Add a save link under the Find button
-                                  add_save_button(route);
+                                  add_save_button(route, locationArray);
                               });
             });
     }
@@ -165,13 +172,13 @@ function add_click_handlers(map, directionsRenderer, stations) {
                                                       stations));
 }
 
-function add_save_button(route) {
+function add_save_button(route, locationArray) {
     $("#save_route").show().hover(function() {
             $(this).addClass("hover_cursor");
         }, function() {
             $(this).removeClass("hover_cursor");
         }).click(function() {
-                save_route(route);
+                save_route(route, locationArray);
             });
 }
 
@@ -338,10 +345,11 @@ function reverse_steps(steps) {
 // Needs to handle errors better:
 //   500 = Server error
 //   403 = Authentication error.  Ask for login credentials
-function save_route(route) {
+function save_route(route, _locationArray) {
     var encoded_route = encode_route(route);
     $.post("/route/add/", {
-            route: encode_route(route)
+            route: encode_route(route),
+			locationArray: encode_locations(_locationArray)
                 })
         .success(function() {alert("Saved!")})
         .error(function(jqXHR, textStatus, errorThrown) {
@@ -364,6 +372,12 @@ function encode_route(route) {
             }
             else return value;
         });
+}
+
+// Converts the array of travel locations to a JSON string
+function encode_locations(locationArray) {
+	var stringy = JSON.stringify(locationArray);
+	return stringy;
 }
 
 // Takes a JSON string and converts into a directions result

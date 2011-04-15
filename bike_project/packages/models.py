@@ -19,6 +19,11 @@ class Route(models.Model):
         json_route["rating"] = self.rating
         return json_route
 
+class RouteLocation(models.Model):
+    route = models.ForeignKey('Route')
+    order = models.IntegerField()
+    location = models.TextField()
+			
 class BikeshareUpdate(models.Model):
     # editable=True makes it show up in the admin interface
     createdate = models.DateTimeField(auto_now_add=True, editable=True)
