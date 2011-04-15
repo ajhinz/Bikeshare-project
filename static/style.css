@@ -1,27 +1,41 @@
-/*html {
-    height: 100%;
+/* @override http://polutropon.com:8001/static/style.css */
+
+html, body {
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+	width: 100%;
 }
-body {
-    font-family: "Georgia";
+#wrapper {
+	min-height: 100%;
+	height: auto;
     height: 100%;
-    margin: 0px;
-    padding: 0px;
+    margin: 0 auto -100px;
 }
 
 #header {
-    height: 75px;
+	background: #eee;
+	height:100px;
 }
 
-#left {
-    width: 150px;
-    height: 600px;
-    float: left;
-    margin-right: 10px;
-}*/
+#sidebar {
+	background: #feffff;
+	padding: 10px;
+	float: left;
+	width: 30%;
+	height:auto;
+	height:100%;
+}
 
 #map_canvas {
-    height: 600px;
+	background: #000;
+	position: absolute;
+	left: 30%;
+	right: 0px;
+	bottom: 0px;
+	top: 100px;
 }
+
 
 .hover_cursor {
     cursor: pointer;
@@ -32,6 +46,10 @@ body {
     display: none;
 }
 
+#footer, #push {
+background: #df781c;
+height:100px;
+}
 /*div#find_buttons span {
     float:left;
     margin-left: 10px;

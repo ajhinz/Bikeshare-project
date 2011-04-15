@@ -14,21 +14,22 @@ var saved_route = null;
 
 {% block title %} Map view {% endblock %}
 
-{% block content %}	    
-		<div class="grid_3">
-	      <h4>Search for a route</h4>
-	      <input type="text" class="find_input"/>
+{% block content %}	   
+	<div id="sidebar">   
+	   <h4>Search for a route</h4>
+	   <input type="text" class="find_input"/>
 	    
-	  		<div id="find_buttons">
-		        <div id ="add_destination"><p>Add Destination</p></div>
-		        <input type="button" value="Find" id="find_button" />
-		        <div id ="save_route"><p>Save Route</p></div>
-		    </div>
-                    <div id="directions">Step-by-step Directions</div>
-	    </div>
+	  	<div id="find_buttons">
+			<div id ="add_destination"><p>Add Destination</p></div>
+		    <input type="button" value="Find" id="find_button" />
+		    <div id ="save_route"><p>Save Route</p></div>
+		</div>
+        <div id="directions">Step-by-step Directions</div>
+	</div>
 	
-	    <div class="grid_13" id="map_canvas"></div>
+	<div id="map_canvas"></div>
 	
+</div>
 		<!-- end .grid_16 -->
-		<div class="clear"></div>
+
 {% endblock %}
