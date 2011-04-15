@@ -179,7 +179,12 @@ function geocode(geocoder, address) {
     // Convert an address to an object containing latitude/longitude
     var defer = $.Deferred();
 
-    geocoder.geocode({"address" : address},
+    var sw = new google.maps.LatLng(38.82065567674717, -77.1682017375);
+    var ne = new google.maps.LatLng(38.98096687330668, -76.90727644453125);
+    var bounds = new google.maps.LatLngBounds(sw, ne);
+
+    geocoder.geocode({address : address,
+                     bounds: bounds},
                      function(results, status) {
                          if (status != google.maps.GeocoderStatus.OK) {
                              alert("Error getting geocoded address. status = " + status);
@@ -240,6 +245,20 @@ function get_route(directionsService, points, travel_mode) {
 function show_route(map, directionsRenderer, route) {
     directionsRenderer.setMap(map);
     directionsRenderer.setDirections(route);
+    
+    $.each(route.routes[0].legs, function(l, leg) {
+            $('<div class="travel_mode">'+leg.steps[0].travel_mode+"</div>")
+                .appendTo("#directions");
+            $('<div class="distance">'+leg.distance.text+"</div>")
+                .appendTo("#directions");
+            $('<div class="duration">'+leg.duration.text+"</div>")
+                .appendTo("#directions");
+            $("<ol></ol>").appendTo("#directions");
+            $.each(leg.steps, function(s, step) {
+                    $('<li class="step">' + step.instructions + '</li>')
+                        .appendTo("#directions ol");
+                });
+        });
 }
 
 function join_routes(start_walk, bike, end_walk) {
