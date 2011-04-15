@@ -14,11 +14,11 @@ from django.template import RequestContext
 
 def index(request):
     context = RequestContext(request, {})
+    context["user"] = request.user
     if request.user.is_authenticated():
         context["routes"] = Route.objects.filter(createuser=request.user)
     else:
         context["routes"] = []
-    context["user"] = request.user
     return render_to_response("index.html", context)
 
 def stations(request):
@@ -104,5 +104,7 @@ def account_create(request):
     return render_to_response("account_create.html", context)
 
 def map(request):
-    return render_to_response("map.html")
-
+    user = request.user    
+    context = RequestContext(request, {})
+    context["user"] = request.user
+    return render_to_response("map.html", context)
