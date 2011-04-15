@@ -63,12 +63,15 @@ def route_add(request):
 def route_get(request, route_id):
     try:
         route = Route.objects.get(pk=route_id)
+        locations = route.routelocation_set.all()
     except Route.DoesNotExist:
         return HttpResponseNotFound("Route not found")
     json_route = route.jsonize()
+    json_locations = [loc.location for loc in locations]
 
     context = RequestContext(request, {})
     context["saved_route"] = simplejson.dumps(json_route)
+    context["saved_locations"] = json_locations
 
     return render_to_response("map.html", context)
 

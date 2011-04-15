@@ -9,6 +9,7 @@ var saved_route = {{ saved_route|safe }};
 {% else %}
 var saved_route = null;
 {% endif %}
+
 </script>
 {% endblock %}
 
@@ -17,8 +18,14 @@ var saved_route = null;
 {% block content %}	   
 	<div id="sidebar">   
 	   <h4>Search for a route</h4>
-	   <input type="text" class="find_input"/>
-	    
+
+           {% if saved_locations %}
+	       {% for location in saved_locations %}
+	       <input type="text" class="find_input" value="{{ location }}"/>
+               {% endfor %}
+           {% else %}
+  	       <input type="text" class="find_input"/>
+           {% endif %}
 	  	<div id="find_buttons">
 			<div id ="add_destination"><p>Add Destination</p></div>
 		    <input type="button" value="Find" id="find_button" />
