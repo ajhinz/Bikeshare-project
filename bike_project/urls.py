@@ -16,9 +16,11 @@ urlpatterns = patterns(
     (r'^account/routes/$', 'packages.views.account_routes'),
     (r'^account/routes/(?P<page>\d+)/$', 'packages.views.account_routes'),
 
-    (r'^stations/$', 'packages.views.stations'),
     (r'^route/add/$', 'packages.views.route_add'),
+    (r'^route/remove/(?P<route_id>\d+)/$', 'packages.views.route_remove'),
     (r'^route/(?P<route_id>\d+)/$', 'packages.views.route_get'),
+
+    (r'^stations/$', 'packages.views.stations'),
 
     (r'^map/$', 'packages.views.map'),
 	

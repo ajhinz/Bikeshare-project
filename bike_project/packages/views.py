@@ -76,6 +76,17 @@ def route_get(request, route_id):
 
     return render_to_response("map.html", context)
 
+@login_required
+def route_remove(request, route_id):
+    user = request.user    
+    try:
+        route = Route.objects.get(pk=route_id, createuser=user)
+    except Route.DoesNotExist:
+        return HttpResponseNotFound("Route not found")
+    route.delete()
+
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
 def account_logout(request):
     logout(request)
     return HttpResponseRedirect("/")

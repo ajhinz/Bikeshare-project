@@ -5,11 +5,19 @@ import external.stations
 import datetime
 
 # Create your models here.
+
+class RouteManager(models.Manager):
+    def get_query_set(self):
+        return super(RouteManager, self).get_query_set().filter(is_deleted=False)
+    
 class Route(models.Model):
     createuser = models.ForeignKey(User)
     createdate = models.DateField(auto_now_add=True)
     route = models.TextField()
     rating = models.SmallIntegerField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+
+    objects = RouteManager()
 
     def jsonize(self):
         json_route = {}
@@ -18,6 +26,10 @@ class Route(models.Model):
         json_route["route"] = self.route
         json_route["rating"] = self.rating
         return json_route
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
 
 class RouteLocation(models.Model):
     route = models.ForeignKey('Route')

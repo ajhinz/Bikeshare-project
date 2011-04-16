@@ -45,7 +45,7 @@
       </td>
       <td>{{ route.rating }}</td>
       <td><a href="/route/{{ route.id }}">View</a>
-          <a href="/route/remove/{{ route.id }}">Remove</a>
+          <a href="/route/remove/{{ route.id }}" onclick="return confirm('Are you sure you want to remove this route?');">Remove</a>
       </td>
     </tr>
     {% endfor %}
