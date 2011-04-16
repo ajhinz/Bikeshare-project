@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %} Your Profile {% endblock %}
+
+{% block content %}	   
+
+<div id="profile">
+
+<h4>Basic Info</h4>
+
+<table id="basic_info">
+  <tbody>
+    <tr>
+      <th>Username:</th><td>{{ user.username }}</td>
+    </tr>
+    <tr>
+      <th>First name:</th><td>{{ user.first_name }}</td>
+    </tr>
+    <tr>
+      <th>Last name:</th><td>{{ user.last_name }}</td>
+    </tr>
+    <tr>
+      <th>Email:</th><td>{{ user.email }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Recent Routes</h4>
+<table id="recent_routes">
+  <thead>
+    <th>ID</th>
+    <th>Created on</th>
+    <th>Locations</th>
+    <th>Rating</th>
+    <th></th>
+  </thead>
+  <tbody>
+    {% for route in routes %}
+    <tr class="{% cycle 'even' 'odd' %}">
+      <td>{{ route.id }}</td>
+      <td>{{ route.createdate }}</td>
+      <td>{% for location in route.routelocation_set.all %}
+              <div>{{ location.location}}</div>
+           {% endfor %}
+      </td>
+      <td>{{ route.rating }}</td>
+      <td><a href="/route/{{ route.id }}">View</a>
+          <a href="/route/remove/{{ route.id }}">Remove</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}

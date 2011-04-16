@@ -11,6 +11,7 @@ urlpatterns = patterns(
      {'template_name': 'account/login.html'}),
     (r'^account/logout/$', 'packages.views.account_logout'),
     (r'^account/create/$', 'packages.views.account_create'),
+    (r'^account/profile/$', 'packages.views.account_profile'),
 
     (r'^stations/$', 'packages.views.stations'),
     (r'^route/add/$', 'packages.views.route_add'),
@@ -33,6 +34,6 @@ urlpatterns = patterns(
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-
-	url(r'', include('social_auth.urls')),
+    
+    url(r'', include('social_auth.urls')),
 )

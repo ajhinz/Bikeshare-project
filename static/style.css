@@ -18,6 +18,10 @@ html, body {
 	height:100px;
 }
 
+#header h2 {
+    display: inline;
+}
+
 #sidebar {
 	background: #feffff;
 	padding: 10px;
@@ -46,47 +50,32 @@ html, body {
     display: none;
 }
 
+#profile {
+    margin: 10px;
+}
+
+#profile h4 {
+    background-color: #00b358;
+    border-bottom: 3px solid #007439;
+}
+
+table#basic_info td {
+    padding: 0 5px 0 5px;;
+}
+table#basic_info th{
+    padding: 0 5px 0 5px;;
+    font-weight: bold;
+}
+
+#recent_routes {
+    width: 800px;
+}
+
+tr.even {
+    background-color: #C6D7C8;
+}
+
 #footer, #push {
 background: #df781c;
 height:100px;
 }
-/*div#find_buttons span {
-    float:left;
-    margin-left: 10px;
-}
-
-div#find_buttons input {
-    float:right;
-}
-
-div#account_create_container {
-    width: 410px;
-    margin: 50px auto 0px auto;
-}
-
-form#account_create {
-    width: 410px;
-}
-
-form#account_create label {
-    width: 200px;
-    display: inline-block;
-    font-size: 1.3em;
-    color: black;
-}
-
-form#account_create p input {
-    width: 200px;
-}
-
-form#account_create p {
-    font-size: 0.75em;
-    color: blue;
-}
-
-form#account_create ul.errorlist li {
-    font-size: 0.8em;
-    color: red;
-}
-
-*/
