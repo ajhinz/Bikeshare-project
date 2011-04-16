@@ -260,10 +260,10 @@ function show_route(map, directionsRenderer, route) {
                 .appendTo("#directions");
             $('<div class="duration">'+leg.duration.text+"</div>")
                 .appendTo("#directions");
-            $("<ol></ol>").appendTo("#directions");
+            var ol = $("<ol></ol>").appendTo("#directions");
             $.each(leg.steps, function(s, step) {
                     $('<li class="step">' + step.instructions + '</li>')
-                        .appendTo("#directions ol");
+                        .appendTo(ol);
                 });
         });
 }
