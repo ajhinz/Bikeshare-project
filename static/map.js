@@ -98,9 +98,10 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                 // Turn arguments object into an array
                 // http://debuggable.com/posts/turning-javascripts-arguments-object-into-an-array:4ac50ef8-3bd0-4a2d-8c2e-535ccbdd56cb
                 var locations = Array.prototype.slice.call(arguments);
-				
-				var locationArray = new Array();
-				// create array of the steps in the trip
+                //gets current selected rating
+   			
+   			    // create array of the steps in the trip
+   				var locationArray = new Array();
 				for (var i = 0; i < locations.length; i++) {
 					locationArray[i] = locations[i].address_components[0].long_name;
 				}
@@ -260,10 +261,10 @@ function show_route(map, directionsRenderer, route) {
                 .appendTo("#directions");
             $('<div class="duration">'+leg.duration.text+"</div>")
                 .appendTo("#directions");
-            $("<ol></ol>").appendTo("#directions");
+            var ol = $("<ol></ol>").appendTo("#directions");
             $.each(leg.steps, function(s, step) {
                     $('<li class="step">' + step.instructions + '</li>')
-                        .appendTo("#directions ol");
+                        .appendTo(ol);
                 });
         });
 }
@@ -347,9 +348,15 @@ function reverse_steps(steps) {
 //   403 = Authentication error.  Ask for login credentials
 function save_route(route, _locationArray) {
     var encoded_route = encode_route(route);
+    
+    // gets the currently selected rating
+    var new_rating = $('input:radio[name=ratings]:checked').val();
+    new_rating = parseInt(new_rating);
+    new_rating = JSON.stringify(new_rating);
     $.post("/route/add/", {
             route: encode_route(route),
-			locationArray: encode_locations(_locationArray)
+			locationArray: encode_locations(_locationArray),
+			rating: new_rating
                 })
         .success(function() {alert("Saved!")})
         .error(function(jqXHR, textStatus, errorThrown) {

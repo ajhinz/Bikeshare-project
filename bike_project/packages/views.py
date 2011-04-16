@@ -47,10 +47,11 @@ def route_add(request):
         try:
             route_raw_json = simplejson.loads(request.POST["route"])
             locationArray_raw = simplejson.loads(request.POST["locationArray"])
+            rating = request.POST["rating"]
         except simplejson.JSONDecodeError:
             return HttpResponseServerError("Bad route provided")
         route_json = simplejson.dumps(route_raw_json)
-        route = Route(createuser=user, route=route_json)
+        route = Route(createuser=user, route=route_json, rating=rating)
         route.save()
 		
         # saves the locations traversed in the route
