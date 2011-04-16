@@ -50,11 +50,11 @@ html, body {
     display: none;
 }
 
-#profile {
+#profile, #routes {
     margin: 10px;
 }
 
-#profile h4 {
+#profile h4, #routes h4{
     background-color: #00b358;
     border-bottom: 3px solid #007439;
 }
@@ -67,7 +67,7 @@ table#basic_info th{
     font-weight: bold;
 }
 
-#recent_routes {
+table#recent_routes, table#saved_routes {
     width: 800px;
 }
 
@@ -78,4 +78,21 @@ tr.even {
 #footer, #push {
 background: #df781c;
 height:100px;
+}
+
+a.logo {
+    text-decoration: none;
+    color: #8D0208;
+}
+
+div.pagination {
+    width: 800px;
+}
+
+div.pagination a.previous {
+    float: left;
+}
+
+div.pagination a.next {
+    float: right;
 }

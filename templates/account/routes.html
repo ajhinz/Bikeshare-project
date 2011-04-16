@@ -1,32 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %} Your Profile {% endblock %}
+{% block title %} Saved Routes {% endblock %}
 
 {% block content %}	   
 
-<div id="profile">
+<div id="routes">
 
-<h4>Basic Info</h4>
+<h4>Saved Routes</h4>
 
-<table id="basic_info">
-  <tbody>
-    <tr>
-      <th>Username:</th><td>{{ user.username }}</td>
-    </tr>
-    <tr>
-      <th>First name:</th><td>{{ user.first_name }}</td>
-    </tr>
-    <tr>
-      <th>Last name:</th><td>{{ user.last_name }}</td>
-    </tr>
-    <tr>
-      <th>Email:</th><td>{{ user.email }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4>Recent Routes</h4><a href="/account/routes">View all routes</a>
-<table id="recent_routes">
+<div class="pagination">
+  {% if routes.has_previous %}
+  <a class="prev" href="/account/routes/{{ routes.previous_page_number }}">Previous</a>
+  {% endif %}
+  {% if routes.has_next %}
+  <a class="next" href="/account/routes/{{ routes.next_page_number }}">Next</a>
+  {% endif %}
+</div>
+<table id="saved_routes">
   <thead>
     <th>ID</th>
     <th>Created on</th>
@@ -35,7 +25,7 @@
     <th></th>
   </thead>
   <tbody>
-    {% for route in routes %}
+    {% for route in routes.object_list %}
     <tr class="{% cycle 'even' 'odd' %}">
       <td>{{ route.id }}</td>
       <td>{{ route.createdate }}</td>

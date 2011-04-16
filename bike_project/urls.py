@@ -1,3 +1,4 @@
+import os
 from django.conf.urls.defaults import *
 
 # Uncomment the next two lines to enable the admin:
@@ -8,10 +9,12 @@ import settings
 urlpatterns = patterns(
     '',
     (r'^account/login/$', 'django.contrib.auth.views.login',
-     {'template_name': 'account/login.html'}),
+     {'template_name': os.path.join('account', 'login.html')}),
     (r'^account/logout/$', 'packages.views.account_logout'),
     (r'^account/create/$', 'packages.views.account_create'),
     (r'^account/profile/$', 'packages.views.account_profile'),
+    (r'^account/routes/$', 'packages.views.account_routes'),
+    (r'^account/routes/(?P<page>\d+)/$', 'packages.views.account_routes'),
 
     (r'^stations/$', 'packages.views.stations'),
     (r'^route/add/$', 'packages.views.route_add'),

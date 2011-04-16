@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect, HttpResponseNotFound
 from django.core import serializers
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.utils import simplejson
 from packages.models import BikeshareStation, Route, RouteLocation
 from django.contrib.auth import authenticate, login, logout
@@ -131,3 +132,21 @@ def account_profile(request):
     context["routes"] = routes
 
     return render_to_response("account/profile.html", context)
+
+@login_required
+def account_routes(request, page=1):
+    context = RequestContext(request, {})
+    user = request.user
+    context["user"] = user
+
+    route_list = Route.objects.filter(createuser=user).order_by("-id")
+    paginator = Paginator(route_list, 5)
+
+    try:
+        routes = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        routes = paginator.page(paginator.num_pages)
+    
+    context["routes"] = routes
+
+    return render_to_response("account/routes.html", context)
