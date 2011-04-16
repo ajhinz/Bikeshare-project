@@ -52,7 +52,7 @@ def route_add(request):
         route = Route(createuser=user, route=route_json)
         route.save()
 		
-		# saves the locations traversed in the route
+        # saves the locations traversed in the route
         for i, location in enumerate(locationArray_raw):
             print i,location
             route_location = RouteLocation(route=route,order=i,location=location)
@@ -120,3 +120,14 @@ def map(request):
     context = RequestContext(request, {})
     context["user"] = request.user
     return render_to_response("map.html", context)
+
+@login_required
+def account_profile(request):
+    context = RequestContext(request, {})
+    user = request.user
+    context["user"] = user
+
+    routes = Route.objects.filter(createuser=user).order_by("-id")[:10]
+    context["routes"] = routes
+
+    return render_to_response("account/profile.html", context)
