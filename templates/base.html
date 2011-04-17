@@ -20,28 +20,30 @@
 	<title>{% block title %}Capital Bikeshare{% endblock %}</title>
 </head>
 <body>
-	<div id="wrapper">
+
 
 		<div id="header">
 
-			<h1><a href="/" class="logo">Capital Bikeshare</a></h1>
-			<p>{% if user.is_authenticated %}
-				<h2>Hello, {{ user.first_name }}!</h2>
-				<a href="/account/routes">Saved Routes</a>
-                                <a href="/account/profile">Profile</a>
-				<a href="/account/logout">Log out</a>
-			</p>
-			{% else %}
-			<p>
-				<a href="/account/create?next=/" class="box">Create an account</a>
-				<a href="/account/login?next=/" class="box">Log in to your account</a>
-			</p>
-			{% endif %}
-			<p>
+				<h1><a href="/" class="logo">Capital Bikeshare</a></h1>
+				{% if user.is_authenticated %}
+				
+					
+				<ul id="nav">
+					<li>Hello, {{ user.first_name }}!<li>
+					<li><a href="/account/routes">Saved Routes</a></li>
+				    <li><a href="/account/profile">Profile</a></li>
+					<li><a href="/account/logout">Log out</a></li>
 
-		</div>
-		
-		<!-- end header -->
+				{% else %}
+				<ul id="nav">
+					<li><a href="/account/create?next=/" class="box">Create an account</a></li>
+					<li><a href="/account/login?next=/" class="box">Log in to your account</a></li>
+						
+				{% endif %}
+				</ul>
+			</div>
+			
+			<!-- end header -->
 		
 		{% block content %}
 		<form action="/route/add/" method="post">{% csrf_token %}

@@ -17,6 +17,8 @@ var saved_route = null;
 {% block title %} Map view {% endblock %}
 
 {% block content %}	   
+	<div id="map_canvas"></div>
+	
 	<div id="sidebar">   
 	   <h4>Search for a route</h4>
 
@@ -46,12 +48,14 @@ var saved_route = null;
 			<input type="radio" name="ratings" value="1" > Poor<br>
 		</div>
 		
-        <div id="directions">Step-by-step Directions</div>
+        <div id="directions" style="display: none">Step-by-step Directions</div>
 		
 	
 	</div>
 	
-	<div id="map_canvas"></div>
+	
+	<div id="footer">footer here!</div>
+	
 	
 </div>
 		<!-- end .grid_16 -->

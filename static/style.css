@@ -1,44 +1,94 @@
 /* @override http://polutropon.com:8001/static/style.css */
 
-html, body {
-	margin: 0px;
-	padding: 0px;
+html {
+	height: 100%
+	}
+
+body {
 	height: 100%;
-	width: 100%;
-}
-#wrapper {
-	min-height: 100%;
-	height: auto;
-    height: 100%;
-    margin: 0 auto -100px;
-}
+	padding: 0px;
+	margin:0px;
+	background-color: #f4f4f4;
+	font-family: arial, verdana, sans-serif;
+	}
+	
 
 #header {
-	background: #eee;
+	background-coloround: #eee;
 	height:100px;
+	margin-bottom: 10px;
+	padding: 10px 10px 0 10px;
 }
 
-#header h2 {
-    display: inline;
+a.logo {
+    text-decoration: none;
+    font-family: "HelveticaNeue-Light";
+    color: #00548e;
+    
+}
+
+#nav {
+	margin: 0px;
+	margin-left: -46px;
+	margin-right: -40px;
+	padding: 10px 0 0 46px;
+	list-style: none;
+	float: left;
+	width: 100%;
+}
+
+#nav li {
+	float: left;
+	margin: 0 1px 0 0;
+	padding: 0;
+	padding-right: 10px;	
+	font-weight: 600;
+	color: #00548e;
+	font-size: 1.2em;
+}
+
+#nav li a {
+	color: #00548e;
 }
 
 #sidebar {
-	background: #feffff;
-	padding: 10px;
 	float: left;
-	width: 30%;
-	height:auto;
-	height:100%;
+	width: 28%;
+	background-color: #eaeaea;
+	margin-bottom: 5px;
+	margin-left: 1%;
+	overflow: auto;
+	height: 70%;
+	padding: 0 10px 0 10px;
+}
+
+#sidebar h4 {
+}
+
+#sidebar input.find_input {
+	width: 97%;
+	font-size: 14px;
+	font-family: Helvetica;
+	padding: 2px;
 }
 
 #map_canvas {
-	background: #000;
-	position: absolute;
-	left: 30%;
-	right: 0px;
-	bottom: 0px;
-	top: 100px;
+	float: left;
+	width: 67%;
+	height: 70%;
+	margin-left: 1%;
+	margin-bottom: 10px;
 }
+
+#footer{
+	background: #eaeaea;
+	clear: both;
+	height: 50px;
+	margin-top: 10px;
+	}
+
+
+/* My Comment */
 
 
 .hover_cursor {
@@ -73,16 +123,6 @@ table#recent_routes, table#saved_routes {
 
 tr.even {
     background-color: #C6D7C8;
-}
-
-#footer, #push {
-background: #df781c;
-height:100px;
-}
-
-a.logo {
-    text-decoration: none;
-    color: #8D0208;
 }
 
 div.pagination {

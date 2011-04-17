@@ -171,8 +171,9 @@ function handle_route_results(directionsService, directionsRenderer,
             // Show the route on the map
             show_route(map, directionsRenderer, route);
             
-            // Show the rating system
+            // Show the rating system and directions header
             $("#rating").show();
+            $("#directions").show();
 
             // Add a save link under the Find button
             add_save_button(route, locationArray);
@@ -368,6 +369,7 @@ function show_route(map, directionsRenderer, route) {
     directionsRenderer.setDirections(route);
 
     $("#directions").empty();
+    $("#directions").show();
     $.each(route.routes[0].legs, function() {
             $('<div class="travel_mode"><a href="javascript:;">'+this.steps[0].travel_mode+"</a> - "+this.distance.text+" - "+this.duration.text+"</div>")
                 .appendTo("#directions")
