@@ -166,7 +166,7 @@ function handle_route_results(directionsService, directionsRenderer,
         else {
             // Join the three directions results into
             // a single route
-            var route = join_routes(end_walk,bike, start_walk);
+            var route = join_routes(start_walk, bike, end_walk);
             
             // Show the route on the map
             show_route(map, directionsRenderer, route);
