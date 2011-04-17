@@ -40,16 +40,30 @@ var saved_route = null;
 		  <div id ="save_route"><p>Save Route</p></div>
 		</div>
 		
-		<div id="rating" style="display: none">
-			<input type="radio" name="ratings" value="1" class="star">
-			<input type="radio" name="ratings" value="2" class="star">
-			<input type="radio" name="ratings" value="3" class="star" checked>
-			<input type="radio" name="ratings" value="4" class="star">
-			<input type="radio" name="ratings" value="5" class="star">
+		<div id="save_result">
+			<div id="login_error" style="display: none">
+				<p>Sorry, but you are currently not logged in.</p>
+				<p>You can either <a href="/account/create?next=/" class="box">create a new account</a>, or <a href="/account/login?next=/" class="box"title="Creating a user">log into</a> an existing account.</p>
+			</div>
+		
+		
+			<div id="login_success" style="display: none">
+				<p>Successfully saved!</p>
+			</div>
+		
+			<div id="rating" style="display: none">
+				<input type="radio" name="ratings" value="1" class="star">
+				<input type="radio" name="ratings" value="2" class="star">
+				<input type="radio" name="ratings" value="3" class="star" checked>
+				<input type="radio" name="ratings" value="4" class="star">
+				<input type="radio" name="ratings" value="5" class="star">
+			</div>
 		</div>
 		
 		<br />
-        <div id="directions" style="display: none">Step-by-step Directions</div>
+        
+		
+		<div id="directions" style="display: none">Step-by-step Directions</div>
 		
 	
 	</div>

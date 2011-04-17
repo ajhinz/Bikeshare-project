@@ -72,6 +72,24 @@ a.logo {
 	padding: 2px;
 }
 
+#login_error {
+	background-color: #cd0711;
+	color: #fff;
+	border: 2px solid #8d0208;
+}
+
+#login_success {
+	background-color: #1fbb14;
+	border: 2px solid #0c6606;
+	color: #fff;
+}
+
+#save_result p {
+	margin: 5px;
+	font-size: 1.1em;
+	font-weight: 600;
+}
+
 #map_canvas {
 	float: left;
 	width: 67%;

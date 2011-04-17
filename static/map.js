@@ -526,9 +526,12 @@ function save_route(route, _locationArray) {
 			locationArray: encode_locations(_locationArray),
 			rating: new_rating
                 })
-        .success(function() {alert("Saved!")})
+        .success(function() {
+            $('#login_success').show("fast").delay(1600).hide("fast");
+            })
         .error(function(jqXHR, textStatus, errorThrown) {
-                alert("Error! " + textStatus + ", " + errorThrown)});
+            $('#login_error').show("fast").delay(1600).hide("fast");
+                });
 }
 
 // Take a directions result and convert into a JSON string
