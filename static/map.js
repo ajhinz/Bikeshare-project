@@ -98,7 +98,6 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                 // Turn arguments object into an array
                 // http://debuggable.com/posts/turning-javascripts-arguments-object-into-an-array:4ac50ef8-3bd0-4a2d-8c2e-535ccbdd56cb
                 var locations = Array.prototype.slice.call(arguments);
-                //gets current selected rating
    			
                 // create array of the steps in the trip
                 var locationArray = new Array();
@@ -172,6 +171,9 @@ function handle_route_results(directionsService, directionsRenderer,
             // Show the route on the map
             show_route(map, directionsRenderer, route);
             
+            // Show the rating system
+            $("#rating").show();
+
             // Add a save link under the Find button
             add_save_button(route, locationArray);
         }
