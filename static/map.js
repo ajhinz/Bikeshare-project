@@ -81,7 +81,7 @@ function add_info_window(map, marker, info_window, station) {
 
 function find_button_click_handler(map, directionsRenderer, stations) {
     // Create the services
-    var geocoder = new google.maps.Geocoder();
+    var  r = new google.maps.Geocoder();
     var directionsService = new google.maps.DirectionsService();
     
     return function() {
@@ -171,6 +171,60 @@ function add_click_handlers(map, directionsRenderer, stations) {
     // Handler for the Find button
     $("#find_button").click(find_button_click_handler(map, directionsRenderer, 
                                                       stations));
+                                                      
+    // Handler for the Find Location Button
+    $("#locate_button").hover(function() {
+            $(this).addClass("hover_cursor");
+        }, function() {
+            $(this).removeClass("hover_cursor");
+        }).click(function() {
+                find_location();
+            });
+}
+
+function find_location() {
+    navigator.geolocation.getCurrentPosition(showmap, location_error);
+}
+
+// handle location errors
+// from http://mobile.tutsplus.com/tutorials/mobile-web-apps/html5-geolocation/
+function location_error(error) {
+    switch(error.code)  
+    {  
+        case error.PERMISSION_DENIED: alert("user did not share geolocation data");  
+        break;  
+
+        case error.POSITION_UNAVAILABLE: alert("could not detect current position");  
+        break;  
+
+        case error.TIMEOUT: alert("retrieving position timed out");  
+        break;  
+
+        default: alert("unknown error");  
+        break;  
+    }
+}
+
+function showmap(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    
+    geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(latitude,longitude);
+    
+    geocoder.geocode({'latLng': latlng}, function(results,status){
+        
+        if (status == google.maps.GeocoderStatus.OK) {
+            if (results[1]) {
+                var current_address = results[1].formatted_address;
+                $("input.find_input").first().val(current_address);
+            }
+        }
+        
+        else {
+            alert ("Geocoder failed due to:" + status);
+        }
+    })
 }
 
 function add_save_button(route, locationArray) {
