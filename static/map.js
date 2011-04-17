@@ -109,8 +109,9 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                 var end_location = locations[locations.length - 1].geometry.location;
 
                 var start_station = find_nearest_station(start_location,
-                                                         stations);
-                var end_station = find_nearest_station(end_location, stations);
+                                                         stations, true, false);
+                var end_station = find_nearest_station(end_location, stations,
+                                                       false, true);
 
 
                 // add stations to list of points
@@ -193,6 +194,7 @@ function add_click_handlers(map, directionsRenderer, stations) {
                 var new_input = input.clone();
                 new_input.val("");
                 input.after(new_input);
+                new_input.focus();
             });
 
     // Handler for the Find button
@@ -288,15 +290,26 @@ function geocode(geocoder, address) {
     return defer.promise();
 }
 
-function find_nearest_station(point, stations) {
+function find_nearest_station(point, stations, origin, destination) {
     // Find the nearest station from the list of stations to the given point
     var nearest_station = null;
     var nearest_distance = null;
-    $.each(stations, function(index, station) {
-            var d = distance(point, station["location"]);
+    $.each(stations, function() {
+            
+            // Skip stations that aren't open yet (e.g. Metro Center)
+            if (this.number_bikes == 0 && this.number_empty_docks == 0) {
+                return true;
+            }
+
+            // Skip stations where bikes or empty docks are not available
+            if ((origin && this.number_bikes == 0) ||
+                (destination && this.number_empty_docks == 0)) {
+                return true;
+            }
+            var d = distance(point, this["location"]);
             if (nearest_station == null ||
                 d < nearest_distance) {
-                nearest_station = station;
+                nearest_station = this;
                 nearest_distance = d;
             }
         });
@@ -354,7 +367,8 @@ function split_bike_route(route, duration, stations) {
                     running_duration += this.duration.value;
                     if (running_duration > leg_duration) {
                         points.push(find_nearest_station(this.end_location,
-                                                            stations).location);
+                                                         stations,
+                                                         false, true).location);
                         running_duration = 0;
                                                             
                     }
@@ -372,7 +386,11 @@ function show_route(map, directionsRenderer, route) {
     $("#directions").empty();
     $("#directions").show();
     $.each(route.routes[0].legs, function(i) {
-            $('<div class="travel_mode"><img class="dir_marker" src="http://www.google.com/mapfiles/marker_green'+String.fromCharCode('A'.charCodeAt() + i)+'.png" /><a href="javascript:;">'+this.steps[0].travel_mode+"</a> - "+this.distance.text+" - "+this.duration.text+"</div>")
+            $('<div class="travel_mode"><img class="dir_marker" src="http://www.google.com/mapfiles/marker_green{letter}.png" /><a href="javascript:;">{travel_mode}</a> - {distance} - {duration}</div>'.supplant(
+              {letter: String.fromCharCode('A'.charCodeAt() + i),
+               travel_mode: this.steps[0].travel_mode, 
+               distance: this.distance.text, 
+               duration: this.duration.text}))
                 .appendTo("#directions")
                 .click(function() { $(this).next().toggle(); });
             var ol = $("<ol></ol>").appendTo("#directions");
