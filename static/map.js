@@ -81,7 +81,7 @@ function add_info_window(map, marker, info_window, station) {
 
 function find_button_click_handler(map, directionsRenderer, stations) {
     // Create the services
-    var  r = new google.maps.Geocoder();
+    var geocoder = new google.maps.Geocoder();
     var directionsService = new google.maps.DirectionsService();
     
     return function() {
