@@ -32,7 +32,8 @@
     <th>Created on</th>
     <th>Locations</th>
     <th>Rating</th>
-    <th></th>
+    <th>Action</th>
+    <th>Share</th>
   </thead>
   <tbody>
     {% for route in routes %}
@@ -46,6 +47,10 @@
       <td>{{ route.rating }}</td>
       <td><a href="/route/{{ route.id }}">View</a>
           <a href="/route/remove/{{ route.id }}" onclick="return confirm('Are you sure you want to remove this route?');">Remove</a>
+      </td>
+      <td>
+        <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://{{ domain }}/route/{{ route.id }}" data-text="Check out my bike route!" data-count="none">Tweet</a>
+        <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fexample.com%2Froute%2F{{ route.id }}&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
       </td>
     </tr>
     {% endfor %}
