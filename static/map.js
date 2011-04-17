@@ -368,10 +368,11 @@ function show_route(map, directionsRenderer, route) {
     directionsRenderer.setMap(map);
     directionsRenderer.setDirections(route);
 
+    // Show directions
     $("#directions").empty();
     $("#directions").show();
-    $.each(route.routes[0].legs, function() {
-            $('<div class="travel_mode"><a href="javascript:;">'+this.steps[0].travel_mode+"</a> - "+this.distance.text+" - "+this.duration.text+"</div>")
+    $.each(route.routes[0].legs, function(i) {
+            $('<div class="travel_mode"><img class="dir_marker" src="http://www.google.com/mapfiles/marker_green'+String.fromCharCode('A'.charCodeAt() + i)+'.png" /><a href="javascript:;">'+this.steps[0].travel_mode+"</a> - "+this.distance.text+" - "+this.duration.text+"</div>")
                 .appendTo("#directions")
                 .click(function() { $(this).next().toggle(); });
             var ol = $("<ol></ol>").appendTo("#directions");

@@ -136,3 +136,9 @@ div.pagination a.previous {
 div.pagination a.next {
     float: right;
 }
+
+img.dir_marker {
+    width: 12px;
+    height: 20px;
+    padding-right: 5px;
+}
