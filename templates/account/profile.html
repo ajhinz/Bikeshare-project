@@ -44,7 +44,19 @@
               <div>{{ location.location}}</div>
            {% endfor %}
       </td>
-      <td>{{ route.rating }}</td>
+      <td>
+
+		<input type="radio" name="ratings-{{ route.id }}" value="1" class="star" disabled="disabled">
+		<input type="radio" name="ratings-{{ route.id }}" value="2" class="star" disabled="disabled">
+		<input type="radio" name="ratings-{{ route.id }}" value="3" class="star" disabled="disabled">
+		<input type="radio" name="ratings-{{ route.id }}" value="4" class="star" disabled="disabled">
+		<input type="radio" name="ratings-{{ route.id }}" value="5" class="star" disabled="disabled">
+
+		<script>
+			var string = "{{ route.id|escapejs }}";
+			var newstring = "ratings-" + string;
+			$('input:radio[name='+newstring+'][value={{route.rating|escapejs}}]').attr('checked', true);
+		</script>
       <td><a href="/route/{{ route.id }}">View</a>
           <a href="/route/remove/{{ route.id }}" onclick="return confirm('Are you sure you want to remove this route?');">Remove</a>
       </td>
