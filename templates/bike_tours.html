@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %} Saved Routes {% endblock %}
+
+{% block content %}	   
+
+<div id="routes">
+
+<h4>Bike Tours</h4>
+
+<table id="saved_routes">
+  <thead>
+    <th>Locations</th>
+    <th>Action</th>
+    <th>Share</th>
+	<th></th>
+  </thead>
+  <tbody>
+    {% for route in routes %}
+    <tr class="{% cycle 'even' 'odd' %}">
+      <td>{% for location in route.routelocation_set.all %}
+              <div>{{ location.location}}</div>
+           {% endfor %}
+      </td>
+      <td><a href="/route/{{ route.id }}">View</a></td>
+      <td>
+        <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://{{ domain }}/route/{{ route.id }}" data-text="Check out my bike route!" data-count="none">Tweet</a>
+        <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fexample.com%2Froute%2F{{ route.id }}&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}
