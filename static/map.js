@@ -133,10 +133,10 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                     var points = $.map(locations, function(location) {
                             return location.geometry.location;
                         });
-                    var points = [].concat([start_station.location],
-                                           points.slice(1, -1),
-                                           [end_station.location]);
-                    
+                    points = [].concat([start_station.location],
+                                       points.slice(1, -1),
+                                       [end_station.location]);
+                    var station_stops = $.map(points, function() {return false});
                     var try_split = $("#split_30:checked").val() !== undefined;
                     
                     // Get start walking directions, bicycling directions,
@@ -154,7 +154,8 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                                                        directionsRenderer,
                                                        map, stations, 
                                                        locationArray,
-                                                       try_split));
+                                                       try_split,
+                                                       station_stops));
                 }
             });
     }
@@ -163,28 +164,31 @@ function find_button_click_handler(map, directionsRenderer, stations) {
 
     
 function handle_route_results(directionsService, directionsRenderer,
-                              map,
-                              stations, locationArray, try_split){
+                              map, stations, locationArray, try_split,
+                              station_stops){
     return function(start_walk, bike, end_walk) {
-        
-        if (try_split) {
-            var duration = route_duration(bike);
-            if (duration > 1800) {
-                var points = split_bike_route(bike, duration, stations);
-                
-                $.when(start_walk,
-                       get_route(directionsService, points, "BICYCLING"),
-                       end_walk)
-                    .done(handle_route_results(directionsService, 
-                                               directionsRenderer,
-                                               map, stations,
-                                               locationArray, false));
-            }
+        var duration = route_duration(bike);
+        if (try_split && duration > 1800) {
+            var result = split_bike_route(bike, duration, stations);
+            var points = result.points;
+            var new_station_stops = result.station_stops;
+            
+            $.when(start_walk,
+                   get_route(directionsService, points, "BICYCLING"),
+                   end_walk)
+                .done(handle_route_results(directionsService, 
+                                           directionsRenderer,
+                                           map, stations,
+                                           locationArray, false,
+                                           new_station_stops));
         }
         else {
             // Join the three directions results into
             // a single route
             var route = join_routes(start_walk, bike, end_walk);
+
+            // Add station stops (if any) to route directions
+            add_station_stops(route, station_stops);
             
             // Show the route on the map
             show_route(map, directionsRenderer, route);
@@ -198,6 +202,16 @@ function handle_route_results(directionsService, directionsRenderer,
         }
     }
 }
+
+function add_station_stops(route, station_stops) {
+    $.each(route.routes[0].legs, function(i) {
+            if (station_stops[i]) {
+                // Hack for adding a new step to the instructions
+                this.steps[this.steps.length - 1].instructions += "</li><li>Exchange bikes at <b>{station_name}</b> station.".supplant(station_stops[i]);
+            }
+        });
+}
+
 function add_click_handlers(map, directionsRenderer, stations) {
     // Add all DOM event listeners
 
@@ -375,24 +389,29 @@ function split_bike_route(route, duration, stations) {
     var number_stops = Math.floor(duration / 1500);
     var leg_duration = duration / (number_stops + 1);
     var points = [];
+    var station_stops = []
     var running_duration = 0;
     $.each(route.routes[0].legs, function(index) {
             if (index == 0) {
                 points.push(this.start_location);
+                station_stops.push(false);
             }
             $.each(this.steps, function() {
                     running_duration += this.duration.value;
                     if (running_duration > leg_duration) {
-                        points.push(find_nearest_station(this.end_location,
-                                                         stations,
-                                                         false, true).location);
+                        var station = find_nearest_station(this.end_location,
+                                                           stations,
+                                                           false, true);
+                        points.push(station.location);
+                        station_stops.push(station);
                         running_duration = 0;
                                                             
                     }
                 });
             points.push(this.end_location);
+            station_stops.push(false);
         });
-    return points;
+    return {points: points, station_stops: station_stops};
 }
 
 function show_route(map, directionsRenderer, route) {
