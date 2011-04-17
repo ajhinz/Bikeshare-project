@@ -100,11 +100,11 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                 var locations = Array.prototype.slice.call(arguments);
                 //gets current selected rating
    			
-   			    // create array of the steps in the trip
-   				var locationArray = new Array();
-				for (var i = 0; i < locations.length; i++) {
-					locationArray[i] = locations[i].address_components[0].long_name;
-				}
+                // create array of the steps in the trip
+                var locationArray = new Array();
+                for (var i = 0; i < locations.length; i++) {
+                    locationArray[i] = locations[i].address_components[0].long_name;
+                }
 				
                 var start_location = locations[0].geometry.location;
                 var end_location = locations[locations.length - 1].geometry.location;
@@ -122,8 +122,10 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                                        points.slice(1, -1),
                                        [end_station.location]);
 
+                var try_split = $("#split_30:checked").val() !== undefined;
+
                 // Get start walking directions, bicycling directions,
-                // and the final walking directiosn
+                // and the final walking directions
                 $.when(get_route(directionsService,
                                  [start_location, start_station.location],
                                  "WALKING"),
@@ -133,26 +135,48 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                        get_route(directionsService,
                                  [end_station.location, end_location],
                                  "WALKING")
-                       ).done(function(start_walk,
-                                       bike,
-                                       end_walk) {
-                                  
-                                  // Join the three directions results into
-                                  // a single route
-                                  route = join_routes(start_walk,
-                                                      bike,
-                                                      end_walk);
-
-                                  // Show the route on the map
-                                  show_route(map, directionsRenderer, route);
-                                  
-                                  // Add a save link under the Find button
-                                  add_save_button(route, locationArray);
-                              });
+                       ).done(handle_route_results(directionsService,
+                                                   directionsRenderer,
+                                                   map, stations, 
+                                                   locationArray, try_split));
             });
     }
 }
+
+
     
+function handle_route_results(directionsService, directionsRenderer,
+                              map,
+                              stations, locationArray, try_split){
+    return function(start_walk, bike, end_walk) {
+        
+        if (try_split) {
+            var duration = route_duration(bike);
+            if (duration > 1800) {
+                var points = split_bike_route(bike, duration, stations);
+                
+                $.when(start_walk,
+                       get_route(directionsService, points, "BICYCLING"),
+                       end_walk)
+                    .done(handle_route_results(directionsService, 
+                                               directionsRenderer,
+                                               map, stations,
+                                               locationArray, false));
+            }
+        }
+        else {
+            // Join the three directions results into
+            // a single route
+            var route = join_routes(start_walk, bike, end_walk);
+            
+            // Show the route on the map
+            show_route(map, directionsRenderer, route);
+            
+            // Add a save link under the Find button
+            add_save_button(route, locationArray);
+        }
+    }
+}
 function add_click_handlers(map, directionsRenderer, stations) {
     // Add all DOM event listeners
 
@@ -240,7 +264,7 @@ function get_route(directionsService, points, travel_mode) {
     };
     directionsService.route(request, function(result, status) {
             if (status != google.maps.DirectionsStatus.OK) {
-                alert("Error getting walking directions. Status = " + status);
+                alert("Error getting directions. Status = " + status);
                 defer.reject();
             }
             else {
@@ -250,10 +274,42 @@ function get_route(directionsService, points, travel_mode) {
     return defer.promise();
 }
 
+function route_duration(route) {
+    var duration = 0;
+    $.each(route.routes[0].legs, function() {
+            duration += this.duration.value;
+        });
+    return duration
+}
+
+function split_bike_route(route, duration, stations) {
+    var number_stops = Math.floor(duration / 1500);
+    var leg_duration = duration / (number_stops + 1);
+    var points = [];
+    var running_duration = 0;
+    $.each(route.routes[0].legs, function(index) {
+            if (index == 0) {
+                points.push(this.start_location);
+            }
+            $.each(this.steps, function() {
+                    running_duration += this.duration.value;
+                    if (running_duration > leg_duration) {
+                        points.push(find_nearest_station(this.end_location,
+                                                            stations).location);
+                        running_duration = 0;
+                                                            
+                    }
+                });
+            points.push(this.end_location);
+        });
+    return points;
+}
+
 function show_route(map, directionsRenderer, route) {
     directionsRenderer.setMap(map);
     directionsRenderer.setDirections(route);
-    
+
+    $("#directions").empty();
     $.each(route.routes[0].legs, function(l, leg) {
             $('<div class="travel_mode">'+leg.steps[0].travel_mode+"</div>")
                 .appendTo("#directions");

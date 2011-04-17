@@ -28,9 +28,13 @@ var saved_route = null;
   	       <input type="text" class="find_input"/>
            {% endif %}
 	  	<div id="find_buttons">
-			<div id ="add_destination"><p>Add Destination</p></div>
-		    <input type="button" value="Find" id="find_button" />
-		    <div id ="save_route"><p>Save Route</p></div>
+		  <div id ="add_destination"><p>Add Destination</p></div>
+                  <div>
+                    <input type="checkbox" id="split_30" />
+                    <label for="split_30">Keep bike segments under 30 minutes</label>
+                    </div>
+		  <input type="button" value="Find" id="find_button" />
+		  <div id ="save_route"><p>Save Route</p></div>
 		</div>
 		
 		<div id="rating">
