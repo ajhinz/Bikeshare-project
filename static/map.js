@@ -104,41 +104,58 @@ function find_button_click_handler(map, directionsRenderer, stations) {
                 for (var i = 0; i < locations.length; i++) {
                     locationArray[i] = locations[i].address_components[0].long_name;
                 }
-				
-                var start_location = locations[0].geometry.location;
-                var end_location = locations[locations.length - 1].geometry.location;
 
-                var start_station = find_nearest_station(start_location,
-                                                         stations, true, false);
-                var end_station = find_nearest_station(end_location, stations,
-                                                       false, true);
-
-
-                // add stations to list of points
-                var points = $.map(locations, function(location) {
-                        return location.geometry.location;
-                    });
-                var points = [].concat([start_station.location],
-                                       points.slice(1, -1),
-                                       [end_station.location]);
-
-                var try_split = $("#split_30:checked").val() !== undefined;
-
-                // Get start walking directions, bicycling directions,
-                // and the final walking directions
-                $.when(get_route(directionsService,
-                                 [start_location, start_station.location],
-                                 "WALKING"),
-                       get_route(directionsService,
-                                 points,
-                                 "BICYCLING"),
-                       get_route(directionsService,
-                                 [end_station.location, end_location],
-                                 "WALKING")
-                       ).done(handle_route_results(directionsService,
-                                                   directionsRenderer,
-                                                   map, stations, 
-                                                   locationArray, try_split));
+                if (locations.length == 1) {
+                    var start_location = locations[0].geometry.location;
+                    var nearest_station = find_nearest_station(start_location,
+                                                               stations,
+                                                               true, false);
+                    $.when(get_route(directionsService,
+                                     [start_location, nearest_station.location],
+                                     "WALKING"))
+                        .done(function(route) {
+                                show_route(map, directionsRenderer, route);
+                            });
+                }
+                else {
+                    var start_location = locations[0].geometry.location;
+                    var end_location = locations[locations.length - 1].geometry.location;
+                    
+                    var start_station = find_nearest_station(start_location,
+                                                             stations, 
+                                                             true, false);
+                    var end_station = find_nearest_station(end_location,
+                                                           stations,
+                                                           false, true);
+                    
+                    
+                    // add stations to list of points
+                    var points = $.map(locations, function(location) {
+                            return location.geometry.location;
+                        });
+                    var points = [].concat([start_station.location],
+                                           points.slice(1, -1),
+                                           [end_station.location]);
+                    
+                    var try_split = $("#split_30:checked").val() !== undefined;
+                    
+                    // Get start walking directions, bicycling directions,
+                    // and the final walking directions
+                    $.when(get_route(directionsService,
+                                     [start_location, start_station.location],
+                                     "WALKING"),
+                           get_route(directionsService,
+                                     points,
+                                     "BICYCLING"),
+                           get_route(directionsService,
+                                     [end_station.location, end_location],
+                                     "WALKING")
+                           ).done(handle_route_results(directionsService,
+                                                       directionsRenderer,
+                                                       map, stations, 
+                                                       locationArray,
+                                                       try_split));
+                }
             });
     }
 }
