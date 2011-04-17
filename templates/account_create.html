@@ -9,11 +9,15 @@
         {{ form.as_p }}
         <input type="hidden" name="next" value="{{ next }}" />
         <input type="submit" value="Submit" />
+	</div>
 
-		<!-- Testing functionality -->
-		<a href="/login/google">Google login</a>
-		<a href="/login/facebook">Facebook login</a>
-		<a href="/login/twitter">Twitter login</a>
-    </div>
+		<div id="social_login">
+		<h2>Or login via a social network</h2>
+		<ul>
+			<li><a href="/login/google" id="google"></a></li>
+			<li><a href="/login/facebook" id="facebook"></a></li>
+			<li><a href="/login/twitter" id="twitter"></a></li>
+		</ul>
+		</div>
   </body>
 </html>
