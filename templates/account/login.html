@@ -2,6 +2,8 @@
 <head><title>Please sign in</title>
 </html>
 <body>
+	
+	<h2>Please sign in.</h2>
 
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
@@ -22,6 +24,15 @@
 
 <input type="submit" value="login" />
 <input type="hidden" name="next" value="{{ next }}" />
+
+<div id="social_login">
+<h2>Or login via a social network</h2>
+<ul>
+	<li><a href="/login/google" id="google"></a></li>
+	<li><a href="/login/facebook" id="facebook"></a></li>
+	<li><a href="/login/twitter" id="twitter"></a></li>
+</ul>
+</div>
 </form>
 
 </body>

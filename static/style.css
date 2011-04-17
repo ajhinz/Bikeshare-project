@@ -9,8 +9,40 @@ body {
 	padding: 0px;
 	margin:0px;
 	background-color: #f4f4f4;
-	font-family: arial, verdana, sans-serif;
+	font-family: HelveticaNeue-Light,arial, verdana, sans-serif;
 	}
+	
+h1 {
+	color: #00548e;
+	margin-top: 0;
+}
+
+h2 {
+	color: #00548e;
+	margin-top: 0;
+}
+
+#account_create_container {
+	padding: 10px;
+}
+
+#social_login {
+	padding: 10px;
+	line-height: 1em;
+}
+
+#account_create p {
+	padding: 2px;
+	margin: 2px;
+}
+
+#social_login ul {
+	list-style: none;
+}
+#social_login li {
+	float: left;
+	
+}
 	
 
 #header {
@@ -20,6 +52,29 @@ body {
 	padding: 10px 10px 0 10px;
 }
 
+#google {
+	background-image: url(/static/img/google-64x64.png);
+	height: 64px;
+	width: 64px;
+	display: block;
+	margin: 10px;
+}
+
+#facebook {
+	background-image: url(/static/img/facebook-64x64.png);
+	height: 64px;
+	width: 64px;
+	display: block;
+	margin: 10px;
+}
+
+#twitter {
+	background-image: url(/static/img/twitter-64x64.png);
+	height: 64px;
+	width: 64px;
+	display: block;
+	margin: 10px;
+}
 a.logo {
     text-decoration: none;
     font-family: "HelveticaNeue-Light";
