@@ -75,12 +75,12 @@ a.logo {
 #login_error {
 	background-color: #cd0711;
 	color: #fff;
-	border: 2px solid #8d0208;
+	border: 1px solid #8d0208;
 }
 
 #login_success {
 	background-color: #1fbb14;
-	border: 2px solid #0c6606;
+	border: 1px solid #0c6606;
 	color: #fff;
 }
 

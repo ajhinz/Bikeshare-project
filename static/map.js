@@ -527,10 +527,11 @@ function save_route(route, _locationArray) {
 			rating: new_rating
                 })
         .success(function() {
-            $('#login_success').show("fast").delay(1600).hide("fast");
+            $('#login_error').hide();
+            $('#login_success').show("fast").delay(2000).hide("fast");
             })
         .error(function(jqXHR, textStatus, errorThrown) {
-            $('#login_error').show("fast").delay(1600).hide("fast");
+            $('#login_error').show("fast");
                 });
 }
 
