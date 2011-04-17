@@ -252,11 +252,13 @@ function showmap(position) {
 }
 
 function add_save_button(route, locationArray) {
+    // Show the save button.  Remove any existing event handlers
+    // and add a new event handler with the current route and locationArray
     $("#save_route").show().hover(function() {
             $(this).addClass("hover_cursor");
         }, function() {
             $(this).removeClass("hover_cursor");
-        }).click(function() {
+        }).unbind("click").click(function() {
                 save_route(route, locationArray);
             });
 }
@@ -364,16 +366,13 @@ function show_route(map, directionsRenderer, route) {
     directionsRenderer.setDirections(route);
 
     $("#directions").empty();
-    $.each(route.routes[0].legs, function(l, leg) {
-            $('<div class="travel_mode">'+leg.steps[0].travel_mode+"</div>")
-                .appendTo("#directions");
-            $('<div class="distance">'+leg.distance.text+"</div>")
-                .appendTo("#directions");
-            $('<div class="duration">'+leg.duration.text+"</div>")
-                .appendTo("#directions");
+    $.each(route.routes[0].legs, function() {
+            $('<div class="travel_mode"><a href="javascript:;">'+this.steps[0].travel_mode+"</a> - "+this.distance.text+" - "+this.duration.text+"</div>")
+                .appendTo("#directions")
+                .click(function() { $(this).next().toggle(); });
             var ol = $("<ol></ol>").appendTo("#directions");
-            $.each(leg.steps, function(s, step) {
-                    $('<li class="step">' + step.instructions + '</li>')
+            $.each(this.steps, function() {
+                    $('<li class="step">' + this.instructions + '</li>')
                         .appendTo(ol);
                 });
         });
