@@ -1,25 +1,76 @@
-Making all sorts of grammatical additions here.
+Capitol Bikeshare Project
 
-Introduction
-
-Prerequisites
+Dependencies
 
 1. Python - http://www.python.org
 2. Django - http://www.djangoproject.com/
 3. PostgreSQL - http://www.postgresql.org/
 4. Apache - http://httpd.apache.org/
-
+5. Psycopg - http://initd.org/psycopg/
+6. Python-openid - http://pypi.python.org/pypi/python-openid/
+7. Python-oauth2 - https://github.com/simplegeo/python-oauth2
+8. Django Social Auth - http://social.matiasaguirre.net/
 
 Notes:
 
-For PostgreSQL, it's recommended that you create your own user
-login (other than the default postgres user).  It may be easier to
-make the user name the same as your operating system user name because
-of the default permissions on who may log in from the host machine,
-but it is not required.
+For PostgreSQL, it's recommended that you create your own user login
+(other than the default postgres user).  You must allow that user to
+connect to the database from localhost.  You can do that editing the
+file /etc/postgresql/8.4/main/pg_hba.conf.  If the PostgreSQL user you
+created for this project was 'myuser', the file would look like this:
+
+# Database administrative login by UNIX sockets
+local   all         postgres                          ident
+
+# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
+
+# "local" is for Unix domain socket connections only
+local   all         myuser                            md5
+local   all         all                               ident
+# IPv4 local connections:
+host    all         all         127.0.0.1/32          md5
+# IPv6 local connections:
+host    all         all         ::1/128               md5
+
+
 
 Installation:
 
-You must edit the settings.py file in the bike_project directory.  You
-must set the database username and password.
+1. Check out the project from github.com
 
+$ git clone git@github.com:ajhinz/Bikeshare-project.git
+
+2. Edit the settings.py file in the bike_project directory.  You must
+set the database name, user, and password.
+
+3. Create the database objects
+
+$ cd Bikeshare-project
+$ ./manage.py syncdb
+
+4. Create the apache site that points to this project by adding the
+following to /etc/apache2/sites-enabled/000-default
+
+
+        WSGIScriptAlias / /usr/local/django/Bikeshare-project/apache2/django.wsgi
+        <Directory /usr/local/django/Bikeshare-project/apache2>
+                Order deny,allow
+                Allow from all
+        </Directory>
+
+        Alias /static /usr/local/django/Bikeshare-project/static
+        <Directory /usr/local/django/Bikehsare-project/static>
+                Order deny,allow
+                Allow from all
+        </Directory>
+
+        Alias /media /usr/lib/pymodules/python2.6/django/contrib/admin/media
+        <Directory /usr/lib/pymodules/python2.6/django/contrib/admin/media>
+                   Order deny,allow
+                   Allow from all
+        </Directory>
+
+
+5. (Re)Start Apache
+
+$ sudo service apache2 restart
