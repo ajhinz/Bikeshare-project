@@ -382,7 +382,15 @@ function route_duration(route) {
     $.each(route.routes[0].legs, function() {
             duration += this.duration.value;
         });
-    return duration
+    return duration;
+}
+
+function route_distance(route) {
+    var distance = 0;
+    $.each(route.routes[0].legs, function() {
+            distance += this.distance.value;
+        });
+    return distance;
 }
 
 function split_bike_route(route, duration, stations) {
@@ -421,6 +429,13 @@ function show_route(map, directionsRenderer, route) {
     // Show directions
     $("#directions").empty();
     $("#directions").show();
+
+    // Show distance and duration
+    var distance = meters_to_miles(route_distance(route));
+    var duration = seconds_to_minutes(route_duration(route));
+    $('<div>Total: {distance} mi - {duration} mins</div>'.supplant({distance: distance, duration: duration})).appendTo("#directions");
+
+    // Show each leg of the route
     $.each(route.routes[0].legs, function(i) {
             $('<div class="travel_mode"><img class="dir_marker" src="http://www.google.com/mapfiles/marker_green{letter}.png" /><a href="javascript:;">{travel_mode}</a> - {distance} - {duration}</div>'.supplant(
               {letter: String.fromCharCode('A'.charCodeAt() + i),
@@ -663,3 +678,11 @@ $('html').ajaxSend(function(event, xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         }
     });
+
+function meters_to_miles(meters) {
+    return Math.round(meters/1000 * 0.6 * 10) / 10;
+}
+
+function seconds_to_minutes(seconds) {
+    return Math.round(seconds / 60);
+}
