@@ -179,12 +179,20 @@ a.logo {
 }
 
 #profile h4, #routes h4{
-    background-color: #00b358;
-    border-bottom: 3px solid #007439;
+    background-color: #3f4040;
+    border-bottom: 3px solid #290100;
+    color: #fff;
+    font-weight: 300;
+    padding-left: 4px;
+    margin-bottom: 10px;
 }
 
 table#basic_info td {
-    padding: 0 5px 0 5px;;
+    padding: 0 5px 0 5px;
+}
+
+tbody {
+	width: 100%;
 }
 table#basic_info th{
     padding: 0 5px 0 5px;;
@@ -192,11 +200,16 @@ table#basic_info th{
 }
 
 table#recent_routes, table#saved_routes {
-    width: 800px;
+    width: 80%;
 }
 
 tr.even {
-    background-color: #C6D7C8;
+    background-color: #dcdede;
+}
+
+td {
+	vertical-align: middle;
+	font-weight: 600;
 }
 
 div.pagination {
