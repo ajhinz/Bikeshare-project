@@ -28,21 +28,19 @@
 		<div id="header">
 
 				<h1><a href="/" class="logo">Capital Bikeshare</a></h1>
-				{% if user.is_authenticated %}
-				
 					
 				<ul id="nav">
+				{% if user.is_authenticated %}
 					<li>Hello, {{ user.first_name }}!<li>
 					<li><a href="/account/routes">Saved Routes</a></li>
 				    <li><a href="/account/profile">Profile</a></li>
 					<li><a href="/account/logout">Log out</a></li>
 
 				{% else %}
-				<ul id="nav">
 					<li><a href="/account/create?next=/" class="box">Create an account</a></li>
 					<li><a href="/account/login?next=/" class="box">Log in to your account</a></li>
-						
 				{% endif %}
+					<li><a href="/bike_tours">Bike Tours</a></li>
 				</ul>
 			</div>
 			

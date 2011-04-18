@@ -162,3 +162,11 @@ def account_routes(request, page=1):
     context["routes"] = routes
 
     return render_to_response("account/routes.html", context)
+
+def bike_tours(request):
+    context = RequestContext(request, {})
+    bike_tour_user = User.objects.get(username="bike_tour")
+    routes = Route.objects.filter(createuser=bike_tour_user)
+    context["routes"] = routes
+
+    return render_to_response("bike_tours.html", context)

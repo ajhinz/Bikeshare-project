@@ -22,6 +22,8 @@ urlpatterns = patterns(
 
     (r'^stations/$', 'packages.views.stations'),
 
+    (r'^bike_tours/$', 'packages.views.bike_tours'),
+
     (r'^map/$', 'packages.views.map'),
 	
 	# for testing the saved route locations
