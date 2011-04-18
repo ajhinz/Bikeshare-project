@@ -5,11 +5,12 @@ Dependencies
 1. Python - http://www.python.org
 2. Django - http://www.djangoproject.com/
 3. PostgreSQL - http://www.postgresql.org/
-4. Apache - http://httpd.apache.org/
-5. Psycopg - http://initd.org/psycopg/
-6. Python-openid - http://pypi.python.org/pypi/python-openid/
-7. Python-oauth2 - https://github.com/simplegeo/python-oauth2
-8. Django Social Auth - http://social.matiasaguirre.net/
+4. WSGI - http://wsgi.org/wsgi/
+5. Apache - http://httpd.apache.org/
+6. Psycopg - http://initd.org/psycopg/
+7. Python-openid - http://pypi.python.org/pypi/python-openid/
+8. Python-oauth2 - https://github.com/simplegeo/python-oauth2
+9. Django Social Auth - http://social.matiasaguirre.net/
 
 Notes:
 
