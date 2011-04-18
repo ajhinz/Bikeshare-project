@@ -19,6 +19,31 @@ function get_stations() {
     return defer.promise();
 }
 
+function complete_field() {
+    //GEOCODER
+    geocoder = new google.maps.Geocoder();
+      
+      var sw = new google.maps.LatLng(38.82065567674717, -77.1682017375);
+      var ne = new google.maps.LatLng(38.98096687330668, -76.90727644453125);
+      var bounds = new google.maps.LatLngBounds(sw, ne);
+
+
+    $("input.find_input").last().autocomplete({
+	    source: function(request, response) {
+                geocoder.geocode( {'address': request.term, bounds:bounds }, function(results, status) {
+                  response($.map(results, function(item) {
+                    return {
+                      label:  item.formatted_address,
+                      value: item.formatted_address,
+                      latitude: item.geometry.location.lat(),
+                      longitude: item.geometry.location.lng()
+                    }
+                  }));
+                })
+              },
+	});
+}
+
 function show_map(stations) {
     // Location of Washington, DC
     var latlng = new google.maps.LatLng(38.8951118, -77.0363658);
@@ -31,7 +56,9 @@ function show_map(stations) {
 
     // Generate the map into div#map_canvas
     var map = new google.maps.Map($("#map_canvas")[0], options);
-
+    
+	complete_field();
+	
     // Add bike trail layer
     var bikeLayer = new google.maps.BicyclingLayer();
     bikeLayer.setMap(map);
@@ -225,7 +252,7 @@ function add_click_handlers(map, directionsRenderer, stations) {
                 var new_input = input.clone();
                 new_input.val("");
                 input.after(new_input);
-                new_input.focus();
+                complete_field();
             });
 
     // Handler for the Find button
@@ -271,6 +298,7 @@ function showmap(position) {
     
     geocoder = new google.maps.Geocoder();
     var latlng = new google.maps.LatLng(latitude,longitude);
+    
     
     geocoder.geocode({'latLng': latlng}, function(results,status){
         
