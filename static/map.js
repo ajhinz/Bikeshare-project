@@ -133,9 +133,14 @@ function find_button_click_handler(map, directionsRenderer, stations) {
    			
                 // create array of the steps in the trip
                 var locationArray = new Array();
-                for (var i = 0; i < locations.length; i++) {
-                    locationArray[i] = locations[i].address_components[0].long_name;
-                }
+                var locationArray = $.map(locations, function(location) {
+                        if ($.inArray("street_address", location.types) >= 0) {
+                            return location.formatted_address;
+                        }
+                        else {
+                            return location.address_components[0].long_name;
+                        }
+                    });
 
                 if (locations.length == 1) {
                     var start_location = locations[0].geometry.location;
