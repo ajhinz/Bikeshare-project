@@ -18,17 +18,17 @@ var saved_route = null;
 
 {% block content %}	   
 	<div id="map_canvas"></div>
-	
 	<div id="sidebar">   
 	   <h4>Search for a route</h4>
 
            {% if saved_locations %}
 	       {% for location in saved_locations %}
-	       <input type="text" class="find_input" value="{{ location }}"/>
+	       <input type="text" class="find_input" value="{{ location }}"/><img src="/static/ajax-loader.gif" class="spinner" style="display: none"/>
                {% endfor %}
            {% else %}
-  	       <input type="text" class="find_input"/>
+  	       <input type="text" class="find_input"/><img src="/static/ajax-loader.gif" class="spinner" style="display: none"/>
            {% endif %}
+		
 	  	<div id="find_buttons">
 		  <div id ="add_destination"><p>Add Destination</p></div>
                   <div>

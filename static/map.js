@@ -19,6 +19,9 @@ function get_stations() {
     return defer.promise();
 }
 
+
+// implements autocomplete
+// based on http://tech.cibul.org/geocode-with-google-maps-api-v3/
 function complete_field() {
     //GEOCODER
     geocoder = new google.maps.Geocoder();
@@ -30,8 +33,10 @@ function complete_field() {
 
     $("input.find_input").last().autocomplete({
 	    source: function(request, response) {
+                $('.spinner').show();
                 geocoder.geocode( {'address': request.term, bounds:bounds }, function(results, status) {
                   response($.map(results, function(item) {
+                     $('.spinner').hide();
                     return {
                       label:  item.formatted_address,
                       value: item.formatted_address,
