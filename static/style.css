@@ -179,12 +179,13 @@ a.logo {
 }
 
 #profile h4, #routes h4{
-    background-color: #3f4040;
+    background-color: #2c5e92;
     border-bottom: 3px solid #290100;
     color: #fff;
-    font-weight: 300;
+    font-weight: 60000;
     padding-left: 4px;
     margin-bottom: 10px;
+    text-shadow: rgba(0, 0, 0, 0.699219) 0px -1px 0px;;
 }
 
 table#basic_info td {
@@ -197,6 +198,7 @@ tbody {
 table#basic_info th{
     padding: 0 5px 0 5px;;
     font-weight: bold;
+	
 }
 
 table#recent_routes, table#saved_routes {
