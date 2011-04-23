@@ -16,9 +16,10 @@ Notes:
 
 For PostgreSQL, it's recommended that you create your own user login
 (other than the default postgres user).  You must allow that user to
-connect to the database from localhost.  You can do that editing the
-file /etc/postgresql/8.4/main/pg_hba.conf.  If the PostgreSQL user you
-created for this project was 'myuser', the file would look like this:
+connect to the database from localhost using a password.  You can do
+that editing the file /etc/postgresql/8.4/main/pg_hba.conf.  If the
+PostgreSQL user you created for this project was 'myuser', the file
+would look like this:
 
 # Database administrative login by UNIX sockets
 local   all         postgres                          ident
@@ -35,7 +36,7 @@ host    all         all         ::1/128               md5
 
 
 
-Installation:
+Git checkout and and run Django configuration:
 
 1. Check out the project from github.com
 
@@ -44,23 +45,41 @@ $ git clone git@github.com:ajhinz/Bikeshare-project.git
 2. Edit the settings.py file in the bike_project directory.  You must
 set the database name, user, and password.
 
-3. Create the database objects
+3. Create the database objects and super-user account.  You will be prompted
+   for the username and password for the super-user account the first time
+   you run syncdb.
 
 $ cd Bikeshare-project/bike_project
 $ ./manage.py syncdb
 
-4. Create the apache site that points to this project by adding the
-following to /etc/apache2/sites-enabled/000-default
+Running the site using Django's built-in web server (for testing only):
+
+1. Navigate bike_project directory
+$ cd Bikeshare-project/bike_project
+
+2. Start test web server
+$ ./manage runserver
+
+3. Navigate your browser to the running site:
+http://localhost:8000
 
 
-        WSGIScriptAlias / /usr/local/django/Bikeshare-project/apache2/django.wsgi
-        <Directory /usr/local/django/Bikeshare-project/apache2>
+Running the site using Apache Web Server:
+
+1. Create the apache site that points to this project by adding the
+   following to /etc/apache2/sites-enabled/000-default (substitute 
+   /path/to/Bikeshare-project with the actual path to where you checked
+   out the project from git):
+
+
+        WSGIScriptAlias / /path/to/Bikeshare-project/apache2/django.wsgi
+        <Directory /path/to/Bikeshare-project/apache2>
                 Order deny,allow
                 Allow from all
         </Directory>
 
-        Alias /static /usr/local/django/Bikeshare-project/static
-        <Directory /usr/local/django/Bikehsare-project/static>
+        Alias /static /path/to/Bikeshare-project/static
+        <Directory /path/to/Bikehsare-project/static>
                 Order deny,allow
                 Allow from all
         </Directory>
@@ -72,9 +91,9 @@ following to /etc/apache2/sites-enabled/000-default
         </Directory>
 
 
-5. (Re)Start Apache
+2. (Re)Start Apache
 
 $ sudo service apache2 restart
 
-6. Navigate your browser to the running site:
+3. Navigate your browser to the running site:
 http://localhost
