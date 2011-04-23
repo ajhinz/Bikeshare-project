@@ -46,7 +46,7 @@ set the database name, user, and password.
 
 3. Create the database objects
 
-$ cd Bikeshare-project
+$ cd Bikeshare-project/bike_project
 $ ./manage.py syncdb
 
 4. Create the apache site that points to this project by adding the
@@ -75,3 +75,6 @@ following to /etc/apache2/sites-enabled/000-default
 5. (Re)Start Apache
 
 $ sudo service apache2 restart
+
+6. Navigate your browser to the running site:
+http://localhost
